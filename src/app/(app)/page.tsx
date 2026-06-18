@@ -1,11 +1,15 @@
-import { kpis, platforms, channel, recommendations, content } from "@/lib/data";
+import { kpis, platforms, channel, recommendations } from "@/lib/data";
+import { getContent } from "@/lib/store";
 import { StatCard, Card, Spark, Badge } from "@/components/ui/primitives";
 import { PlatformIcon, platformLabel } from "@/components/ui/platform";
 import { compact, money } from "@/lib/utils";
 import Link from "next/link";
 import { ArrowRight, Target, Sparkles } from "lucide-react";
 
-export default function DashboardPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const content = await getContent();
   const goalPct = Math.round((channel.goal.current / channel.goal.target) * 100);
   return (
     <div className="space-y-6">
