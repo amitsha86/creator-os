@@ -1,4 +1,5 @@
-import { deals, type Deal } from "@/lib/data";
+import { type Deal } from "@/lib/data";
+import { getDeals } from "@/lib/store";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { money } from "@/lib/utils";
 import { Briefcase } from "lucide-react";
@@ -6,7 +7,10 @@ import { Briefcase } from "lucide-react";
 const STAGES: Deal["stage"][] = ["Prospect", "Outreach", "Negotiation", "Booked", "Delivered", "Paid"];
 const healthTone: Record<string, any> = { "On track": "mint", "At risk": "amber", Stalled: "rose" };
 
-export default function CRMPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CRMPage() {
+  const deals = await getDeals();
   const pipelineValue = deals.filter((d) => !["Paid"].includes(d.stage)).reduce((a, d) => a + d.value, 0);
   return (
     <div>
