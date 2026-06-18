@@ -49,3 +49,63 @@ model VaultItem {
   tags      String[]
   createdAt DateTime @default(now())
 }
+
+model Research {
+  id         String   @id
+  kind       String
+  title      String
+  source     String
+  summary    String
+  collection String
+  createdAt  DateTime @default(now())
+}
+
+model CalendarPost {
+  id       String @id
+  title    String
+  platform String
+  day      Int
+  time     String
+}
+
+model Competitor {
+  id         String @id
+  handle     String
+  platform   String
+  subs       Int
+  growth     Float
+  cadence    String
+  topVideo   String
+  topViews   Int
+  thumbStyle String
+}
+
+model Opportunity {
+  id          String   @id
+  title       String
+  niche       String
+  viral       Int
+  opportunity Int
+  saturation  Int
+  momentum    String
+  why         String
+  examples    String[]
+  format      String
+  spark       Int[]
+}
+
+model TeamMember {
+  id       String @id
+  name     String
+  role     String
+  initials String
+  color    String
+}
+
+model Recommendation {
+  id      String @id
+  action  String
+  impact  Int
+  effort  String
+  module  String
+}
