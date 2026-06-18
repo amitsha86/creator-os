@@ -5,6 +5,7 @@ import { money } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Briefcase } from "lucide-react";
+import { NewDealButton } from "@/components/new-deal-button";
 
 const STAGES: Deal["stage"][] = ["Prospect", "Outreach", "Negotiation", "Booked", "Delivered", "Paid"];
 const healthTone: Record<string, any> = { "On track": "mint", "At risk": "amber", Stalled: "rose" };
@@ -19,7 +20,7 @@ export default async function CRMPage() {
   return (
     <div>
       <PageHeader icon={<Briefcase size={18} />} title="Creator CRM" subtitle="Manage sponsors, brand deals, and partnerships — a HubSpot built for creator revenue."
-        actions={<button className="btn-primary">+ New deal</button>} />
+        actions={<NewDealButton />} />
 
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[["Open pipeline", money(pipelineValue)], ["Booked", money(deals.filter(d=>d.stage==="Booked").reduce((a,d)=>a+d.value,0))], ["This quarter", money(38800)], ["Win rate", "42%"]].map(([k, v]) => (
