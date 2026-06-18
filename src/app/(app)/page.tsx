@@ -1,5 +1,5 @@
-import { kpis, platforms, channel, recommendations } from "@/lib/data";
-import { getContent } from "@/lib/store";
+import { kpis, platforms, channel } from "@/lib/data";
+import { getContent, getRecommendations } from "@/lib/store";
 import { StatCard, Card, Spark, Badge } from "@/components/ui/primitives";
 import { PlatformIcon, platformLabel } from "@/components/ui/platform";
 import { compact, money } from "@/lib/utils";
@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const content = await getContent();
+  const recommendations = await getRecommendations();
   const goalPct = Math.round((channel.goal.current / channel.goal.target) * 100);
   return (
     <div className="space-y-6">
