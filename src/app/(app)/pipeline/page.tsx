@@ -22,6 +22,23 @@ export default function PipelinePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  async function addContent(stage: Stage) {
+    const title = window.prompt(`New content title (${stage}):`);
+    if (!title?.trim()) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/content", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ title: title.trim(), stage }),
+      });
+      const data = await res.json();
+      if (data.item) setItems((it) => [...it, data.item]);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function drop(stage: Stage) {
     setOver(null);
     if (!dragId) return;
@@ -51,7 +68,7 @@ export default function PipelinePage() {
     <div>
       <PageHeader icon={<KanbanSquare size={18} />} title="Content Pipeline"
         subtitle="Idea → Analyze. Drag cards across stages — changes are saved to your database and persist across reloads."
-        actions={saving ? <span className="flex items-center gap-1.5 text-xs text-ink-faint"><Loader2 size={12} className="animate-spin" /> Saving…</span> : <button className="btn-primary">+ New content</button>} />
+        actions={saving ? <span className="flex items-center gap-1.5 text-xs text-ink-faint"><Loader2 size={12} className="animate-spin" /> Saving…</span> : <button onClick={() => addContent("Idea")} className="btn-primary">+ New content</button>} />
 
       {loading ? (
         <div className="flex items-center justify-center gap-2 py-20 text-sm text-ink-muted"><Loader2 size={16} className="animate-spin" /> Loading pipeline…</div>
@@ -84,7 +101,7 @@ export default function PipelinePage() {
                       </div>
                     </div>
                   ))}
-                  <button className="w-full rounded-lg border border-dashed border-line py-1.5 text-xs text-ink-faint hover:text-ink-muted">+ Add</button>
+                  <button onClick={() => addContent(stage)} className="w-full rounded-lg border border-dashed border-line py-1.5 text-xs text-ink-faint hover:text-ink-muted">+ Add</button>
                 </div>
               </div>
             );
