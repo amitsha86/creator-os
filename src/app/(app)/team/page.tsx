@@ -1,4 +1,4 @@
-import { team } from "@/lib/data";
+import { getTeam } from "@/lib/store";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { Users, MessageSquare, CheckCircle2, AtSign } from "lucide-react";
 
@@ -9,7 +9,10 @@ const activity = [
   { who: "Sam", icon: CheckCircle2, text: "submitted “Used-gear haul” for review", time: "5h" },
 ];
 
-export default function TeamPage() {
+export const dynamic = "force-dynamic";
+
+export default async function TeamPage() {
+  const team = await getTeam();
   return (
     <div>
       <PageHeader icon={<Users size={18} />} title="Team Collaboration" subtitle="Roles, comments, approvals, and shared files — your whole content business, multiplayer."
