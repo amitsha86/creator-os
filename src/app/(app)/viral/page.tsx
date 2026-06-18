@@ -2,6 +2,7 @@ import { getOpportunities } from "@/lib/store";
 import { Card, Badge, Spark, PageHeader } from "@/components/ui/primitives";
 import { Flame } from "lucide-react";
 import { ViralAsk } from "./viral-ask";
+import { OpportunityActions } from "@/components/opportunity-actions";
 
 const momentumTone: Record<string, any> = { Emerging: "mint", Rising: "sky", Peaking: "amber", Declining: "rose" };
 
@@ -40,8 +41,7 @@ export default async function ViralPage() {
             <div className="mt-3"><Spark data={o.spark} color="#6366f1" /></div>
             <p className="mt-2 text-sm text-ink-muted"><span className="text-ink-faint">Why now:</span> {o.why}</p>
             <div className="mt-3 flex items-center gap-2">
-              <button className="btn-primary">Turn into idea</button>
-              <button className="btn-ghost">Draft script</button>
+              <OpportunityActions title={o.title} format={o.format} />
               <span className="ml-auto text-xs text-ink-faint">{o.format}</span>
             </div>
           </Card>

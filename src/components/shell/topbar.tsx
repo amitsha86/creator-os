@@ -1,5 +1,6 @@
 "use client";
 import { Search, Bell, Plus, Command } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
 
 export function Topbar({ onToggleAI }: { onToggleAI: () => void }) {
   return (
@@ -13,6 +14,7 @@ export function Topbar({ onToggleAI }: { onToggleAI: () => void }) {
         <button className="btn-ghost"><Plus size={15} /> New</button>
         <button className="btn-subtle h-9 w-9 !px-0"><Bell size={16} /></button>
         <button onClick={onToggleAI} className="btn-primary">Ask AI</button>
+        <div className="ml-1 flex items-center"><UserButton afterSignOutUrl="/sign-in" /></div>
       </div>
     </header>
   );

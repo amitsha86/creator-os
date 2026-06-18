@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Brain, Loader2, Copy, Check } from "lucide-react";
+import { Brain, Loader2, Copy, Check, BookMarked } from "lucide-react";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +26,19 @@ export default function BrainPage() {
   const [live, setLive] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  async function saveToVault() {
+    if (!out) return;
+    const kind = type === "script" ? "Script" : type === "hooks" ? "Hook" : type === "titles" ? "Hook" : "Template";
+    await fetch("/api/vault", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ kind, title: `${topic}`, tags: [type] }),
+    });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1800);
+  }
 
   async function run() {
     setLoading(true); setOut(null);
@@ -68,7 +81,10 @@ export default function BrainPage() {
         <Card>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-medium text-ink">Output</span>
-            {out && <button onClick={copy} className="btn-subtle h-7 px-2 text-xs">{copied ? <><Check size={13} /> Copied</> : <><Copy size={13} /> Copy</>}</button>}
+            {out && <div className="flex items-center gap-1.5">
+              <button onClick={saveToVault} className="btn-subtle h-7 px-2 text-xs">{saved ? <><Check size={13} /> Saved</> : <><BookMarked size={13} /> Save to Vault</>}</button>
+              <button onClick={copy} className="btn-subtle h-7 px-2 text-xs">{copied ? <><Check size={13} /> Copied</> : <><Copy size={13} /> Copy</>}</button>
+            </div>}
           </div>
           {!out && !loading && <div className="rounded-lg border border-dashed border-line bg-bg-soft px-4 py-10 text-center text-sm text-ink-faint">Pick a type and topic, then hit Generate.</div>}
           {loading && <div className="flex items-center justify-center gap-2 py-10 text-sm text-ink-muted"><Loader2 size={16} className="animate-spin" /> Thinking…</div>}

@@ -3,13 +3,17 @@ import { getContent, getRecommendations } from "@/lib/store";
 import { StatCard, Card, Spark, Badge } from "@/components/ui/primitives";
 import { PlatformIcon, platformLabel } from "@/components/ui/platform";
 import { compact, money } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Target, Sparkles } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const content = await getContent();
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+  const content = await getContent(userId);
   const recommendations = await getRecommendations();
   const goalPct = Math.round((channel.goal.current / channel.goal.target) * 100);
   return (

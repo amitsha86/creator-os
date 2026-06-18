@@ -1,5 +1,7 @@
 import { getVault } from "@/lib/store";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { Library, Search, Quote, FileText, Layers, Image as ImageIcon, FileCode, BookMarked } from "lucide-react";
 
 const kindIcon: Record<string, any> = { Hook: Quote, Script: FileText, Framework: Layers, Thumbnail: ImageIcon, Template: FileCode, SOP: BookMarked };
@@ -7,7 +9,9 @@ const kindIcon: Record<string, any> = { Hook: Quote, Script: FileText, Framework
 export const dynamic = "force-dynamic";
 
 export default async function VaultPage() {
-  const vault = await getVault();
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+  const vault = await getVault(userId);
   const kinds = Array.from(new Set(vault.map((v) => v.kind)));
   return (
     <div>
