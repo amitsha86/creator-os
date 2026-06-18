@@ -1,0 +1,51 @@
+// CreatorOS database schema
+// Postgres on Vercel (Neon). User-mutated data persists here;
+// static reference/analytics data stays in the seed module.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Content {
+  id           String   @id
+  title        String
+  type         String
+  stage        String
+  assignee     String
+  priority     String
+  due          String
+  platform     String
+  retention    Int?
+  hook         Int?
+  emotional    Int?
+  viral        Int?
+  predictedCtr Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Deal {
+  id           String   @id
+  brand        String
+  stage        String
+  value        Int
+  contact      String
+  deliverables String
+  health       String
+  createdAt    DateTime @default(now())
+}
+
+model VaultItem {
+  id        String   @id
+  kind      String
+  title     String
+  perf      Int
+  tags      String[]
+  createdAt DateTime @default(now())
+}
