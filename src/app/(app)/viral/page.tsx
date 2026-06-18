@@ -1,11 +1,14 @@
-import { opportunities } from "@/lib/data";
+import { getOpportunities } from "@/lib/store";
 import { Card, Badge, Spark, PageHeader } from "@/components/ui/primitives";
 import { Flame } from "lucide-react";
 import { ViralAsk } from "./viral-ask";
 
 const momentumTone: Record<string, any> = { Emerging: "mint", Rising: "sky", Peaking: "amber", Declining: "rose" };
 
-export default function ViralPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ViralPage() {
+  const opportunities = await getOpportunities();
   return (
     <div>
       <PageHeader icon={<Flame size={18} />} title="Viral Intelligence" subtitle="Ranked opportunities for your niche — what to make next, before the trend peaks." />
