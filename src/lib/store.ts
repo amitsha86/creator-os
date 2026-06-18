@@ -78,6 +78,30 @@ export async function moveContent(id: string, ownerId: string, stage: Stage): Pr
   const res = await prisma.content.updateMany({ where: { id, ownerId }, data: { stage } });
   return res.count > 0;
 }
+export async function createContent(ownerId: string, data: { title: string; type?: string; stage?: Stage; platform?: string; priority?: string }): Promise<ContentItem> {
+  const row = await prisma.content.create({
+    data: {
+      ownerId, title: data.title, type: data.type ?? "Long-form", stage: data.stage ?? "Idea",
+      assignee: "Maya", priority: data.priority ?? "Med", due: "", platform: data.platform ?? "youtube",
+    },
+  });
+  return toContentItem(row);
+}
+export async function createDeal(ownerId: string, data: { brand: string; value?: number; contact?: string; deliverables?: string }): Promise<Deal> {
+  const d = await prisma.deal.create({
+    data: {
+      ownerId, brand: data.brand, stage: "Prospect", value: data.value ?? 0,
+      contact: data.contact ?? "", deliverables: data.deliverables ?? "", health: "On track",
+    },
+  });
+  return { id: d.id, brand: d.brand, stage: d.stage as Deal["stage"], value: d.value, contact: d.contact, deliverables: d.deliverables, health: d.health as Deal["health"] };
+}
+export async function createVaultItem(ownerId: string, data: { kind: string; title: string; tags?: string[] }): Promise<VaultItem> {
+  const v = await prisma.vaultItem.create({
+    data: { ownerId, kind: data.kind, title: data.title, perf: 0, tags: data.tags ?? [] },
+  });
+  return { id: v.id, kind: v.kind as VaultItem["kind"], title: v.title, perf: v.perf, tags: v.tags };
+}
 export async function getDeals(ownerId: string): Promise<Deal[]> {
   try {
     await ensureUserSeeded(ownerId);
