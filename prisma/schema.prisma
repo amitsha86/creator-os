@@ -118,3 +118,9 @@ model Recommendation {
   effort  String
   module  String
 }
+
+model UserSettings {
+  ownerId       String   @id
+  youtubeHandle String?
+  updatedAt     DateTime @updatedAt
+}
