@@ -1,10 +1,13 @@
-import { research } from "@/lib/data";
+import { getResearch } from "@/lib/store";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { BookOpen, FileText, Video, StickyNote, Hash } from "lucide-react";
 
 const kindIcon: Record<string, any> = { Article: FileText, Video: Video, Note: StickyNote, Thread: Hash };
 
-export default function ResearchPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ResearchPage() {
+  const research = await getResearch();
   const collections = Array.from(new Set(research.map((r) => r.collection)));
   return (
     <div>
