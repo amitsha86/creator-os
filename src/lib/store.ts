@@ -117,6 +117,24 @@ export async function getVault(ownerId: string): Promise<VaultItem[]> {
   } catch { return seedVault; }
 }
 
+// ---------------- per-user settings ----------------
+export async function getSettings(ownerId: string): Promise<{ youtubeHandle: string | null }> {
+  try {
+    const s = await prisma.userSettings.findUnique({ where: { ownerId } });
+    return { youtubeHandle: s?.youtubeHandle ?? null };
+  } catch {
+    return { youtubeHandle: null };
+  }
+}
+export async function setYoutubeHandle(ownerId: string, handle: string | null): Promise<void> {
+  const value = handle?.trim() || null;
+  await prisma.userSettings.upsert({
+    where: { ownerId },
+    create: { ownerId, youtubeHandle: value },
+    update: { youtubeHandle: value },
+  });
+}
+
 // ---------------- shared getters ----------------
 export async function getResearch(): Promise<ResearchItem[]> {
   try { await ensureGlobalSeeded(); const rows = await prisma.research.findMany({ orderBy: { createdAt: "asc" } });
