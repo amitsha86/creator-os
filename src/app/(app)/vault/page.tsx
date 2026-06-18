@@ -1,10 +1,13 @@
-import { vault } from "@/lib/data";
+import { getVault } from "@/lib/store";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { Library, Search, Quote, FileText, Layers, Image as ImageIcon, FileCode, BookMarked } from "lucide-react";
 
 const kindIcon: Record<string, any> = { Hook: Quote, Script: FileText, Framework: Layers, Thumbnail: ImageIcon, Template: FileCode, SOP: BookMarked };
 
-export default function VaultPage() {
+export const dynamic = "force-dynamic";
+
+export default async function VaultPage() {
+  const vault = await getVault();
   const kinds = Array.from(new Set(vault.map((v) => v.kind)));
   return (
     <div>
