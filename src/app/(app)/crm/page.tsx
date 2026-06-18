@@ -2,6 +2,8 @@ import { type Deal } from "@/lib/data";
 import { getDeals } from "@/lib/store";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { money } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { Briefcase } from "lucide-react";
 
 const STAGES: Deal["stage"][] = ["Prospect", "Outreach", "Negotiation", "Booked", "Delivered", "Paid"];
@@ -10,7 +12,9 @@ const healthTone: Record<string, any> = { "On track": "mint", "At risk": "amber"
 export const dynamic = "force-dynamic";
 
 export default async function CRMPage() {
-  const deals = await getDeals();
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+  const deals = await getDeals(userId);
   const pipelineValue = deals.filter((d) => !["Paid"].includes(d.stage)).reduce((a, d) => a + d.value, 0);
   return (
     <div>
