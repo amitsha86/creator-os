@@ -1,11 +1,14 @@
-import { calendarPosts } from "@/lib/data";
+import { getCalendarPosts } from "@/lib/store";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { PlatformIcon, platformColor } from "@/components/ui/platform";
 import { CalendarDays, Clock } from "lucide-react";
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-export default function CalendarPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CalendarPage() {
+  const calendarPosts = await getCalendarPosts();
   return (
     <div>
       <PageHeader icon={<CalendarDays size={18} />} title="Content Calendar" subtitle="Plan and schedule across every platform. Drag to reschedule; best-time slots are suggested."
