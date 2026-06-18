@@ -1,12 +1,14 @@
 import { kpis, platforms, channel } from "@/lib/data";
-import { getContent, getRecommendations } from "@/lib/store";
+import { getContent, getRecommendations, getSettings } from "@/lib/store";
+import { fetchChannelStats, youtubeEnabled } from "@/lib/youtube";
+import { ConnectChannel } from "@/components/connect-channel";
 import { StatCard, Card, Spark, Badge } from "@/components/ui/primitives";
 import { PlatformIcon, platformLabel } from "@/components/ui/platform";
 import { compact, money } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Target, Sparkles } from "lucide-react";
+import { ArrowRight, Target, Sparkles, Youtube } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +17,9 @@ export default async function DashboardPage() {
   if (!userId) redirect("/sign-in");
   const content = await getContent(userId);
   const recommendations = await getRecommendations();
+  const { youtubeHandle } = await getSettings(userId);
+  const ytEnabled = youtubeEnabled();
+  const yt = youtubeHandle ? await fetchChannelStats(youtubeHandle) : null;
   const goalPct = Math.round((channel.goal.current / channel.goal.target) * 100);
   return (
     <div className="space-y-6">
@@ -25,6 +30,35 @@ export default async function DashboardPage() {
         </div>
         <Badge tone="brand"><Sparkles size={12} /> Growth Score {channel.growthScore}</Badge>
       </div>
+
+      {/* YouTube live */}
+      <Card>
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-2 text-sm font-medium text-ink">
+            <Youtube size={16} className="text-rose" /> YouTube {yt && <Badge tone="mint">live</Badge>}
+          </div>
+          <ConnectChannel current={youtubeHandle} />
+        </div>
+        {yt ? (
+          <>
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              {([["Subscribers", yt.subscribers], ["Total views", yt.views], ["Videos", yt.videos]] as const).map(([k, v]) => (
+                <div key={k} className="rounded-lg border border-line bg-bg-soft p-3">
+                  <div className="text-xs text-ink-faint">{k}</div>
+                  <div className="mt-1 text-2xl font-semibold text-ink">{v == null ? "Hidden" : compact(Number(v))}</div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-ink-faint">{yt.title} · {yt.handle} · live from YouTube</p>
+          </>
+        ) : youtubeHandle && !ytEnabled ? (
+          <p className="mt-3 text-sm text-amber">Channel saved ({youtubeHandle}), but no YouTube API key is set yet. Add YOUTUBE_API_KEY in Vercel to pull live stats.</p>
+        ) : youtubeHandle ? (
+          <p className="mt-3 text-sm text-ink-faint">Couldn&apos;t fetch stats for {youtubeHandle} — double-check the handle or channel ID.</p>
+        ) : (
+          <p className="mt-3 text-sm text-ink-faint">Connect your channel above to see live subscriber, view, and video counts.</p>
+        )}
+      </Card>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
