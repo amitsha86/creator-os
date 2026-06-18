@@ -1,10 +1,13 @@
-import { competitors } from "@/lib/data";
+import { getCompetitors } from "@/lib/store";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { PlatformIcon } from "@/components/ui/platform";
 import { compact } from "@/lib/utils";
 import { Swords, TrendingUp, Lightbulb } from "lucide-react";
 
-export default function CompetitorsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CompetitorsPage() {
+  const competitors = await getCompetitors();
   return (
     <div>
       <PageHeader icon={<Swords size={18} />} title="Competitor Intelligence" subtitle="Track channels, decode why videos win, and find where rivals are exposed."
