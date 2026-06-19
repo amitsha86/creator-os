@@ -147,13 +147,17 @@ export async function getCalendarPosts(): Promise<CalendarPost[]> {
     return rows.map((c: any) => ({ id: c.id, title: c.title, platform: c.platform, day: c.day, time: c.time }));
   } catch { return seedCalendar; }
 }
-export async function getCompetitors(ownerId?: string): Promise<Competitor[]> {
+export async function getCompetitors(ownerId?: string): Promise<(Competitor & { owned: boolean })[]> {
   try {
     await ensureGlobalSeeded();
     const where = ownerId ? { OR: [{ ownerId: null }, { ownerId }] } : {};
     const rows = await prisma.competitor.findMany({ where, orderBy: { growth: "desc" } });
-    return rows.map((c: any) => ({ id: c.id, handle: c.handle, platform: c.platform, subs: Number(c.subs), growth: c.growth, cadence: c.cadence, topVideo: c.topVideo, topViews: Number(c.topViews), thumbStyle: c.thumbStyle }));
-  } catch { return seedCompetitors; }
+    return rows.map((c: any) => ({ id: c.id, handle: c.handle, platform: c.platform, subs: Number(c.subs), growth: c.growth, cadence: c.cadence, topVideo: c.topVideo, topViews: Number(c.topViews), thumbStyle: c.thumbStyle, owned: Boolean(ownerId && c.ownerId === ownerId) }));
+  } catch { return seedCompetitors.map((c) => ({ ...c, owned: false })); }
+}
+export async function deleteCompetitor(ownerId: string, id: string): Promise<boolean> {
+  const res = await prisma.competitor.deleteMany({ where: { id, ownerId } });
+  return res.count > 0;
 }
 export async function createCompetitor(ownerId: string, data: { handle: string }): Promise<Competitor> {
   const raw = data.handle.trim();
