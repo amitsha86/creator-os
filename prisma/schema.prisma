@@ -78,7 +78,8 @@ model CalendarPost {
 }
 
 model Competitor {
-  id         String @id
+  id         String  @id
+  ownerId    String?
   handle     String
   platform   String
   subs       Int
@@ -87,6 +88,8 @@ model Competitor {
   topVideo   String
   topViews   Int
   thumbStyle String
+
+  @@index([ownerId])
 }
 
 model Opportunity {
