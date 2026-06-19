@@ -1,5 +1,6 @@
 import { getResearch } from "@/lib/store";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
+import { ResearchAsk } from "@/components/research-ask";
 import { BookOpen, FileText, Video, StickyNote, Hash } from "lucide-react";
 
 const kindIcon: Record<string, any> = { Article: FileText, Video: Video, Note: StickyNote, Thread: Hash };
@@ -29,11 +30,7 @@ export default async function ResearchPage() {
         </Card>
 
         <div className="space-y-3">
-          <Card className="border-brand/30 bg-gradient-to-br from-brand/10 to-transparent">
-            <div className="text-sm font-medium text-ink">Ask your research</div>
-            <input className="input mt-2" placeholder="e.g. What do all my saved hook teardowns have in common?" />
-            <p className="mt-2 text-xs text-ink-faint">Answers are grounded in your saved items with citations (RAG over your workspace).</p>
-          </Card>
+          <ResearchAsk />
 
           {research.map((r) => {
             const Icon = kindIcon[r.kind];
