@@ -19,6 +19,7 @@ import {
   type CalendarPost, type Competitor, type Opportunity, type TeamMember,
   type Recommendation, type Stage,
 } from "@/lib/data";
+import { fetchChannelStats } from "@/lib/youtube";
 
 // ---------------- shared (global) reference data ----------------
 let globalSeedPromise: Promise<void> | null = null;
@@ -146,10 +147,33 @@ export async function getCalendarPosts(): Promise<CalendarPost[]> {
     return rows.map((c: any) => ({ id: c.id, title: c.title, platform: c.platform, day: c.day, time: c.time }));
   } catch { return seedCalendar; }
 }
-export async function getCompetitors(): Promise<Competitor[]> {
-  try { await ensureGlobalSeeded(); const rows = await prisma.competitor.findMany();
+export async function getCompetitors(ownerId?: string): Promise<Competitor[]> {
+  try {
+    await ensureGlobalSeeded();
+    const where = ownerId ? { OR: [{ ownerId: null }, { ownerId }] } : {};
+    const rows = await prisma.competitor.findMany({ where, orderBy: { growth: "desc" } });
     return rows.map((c: any) => ({ id: c.id, handle: c.handle, platform: c.platform, subs: c.subs, growth: c.growth, cadence: c.cadence, topVideo: c.topVideo, topViews: c.topViews, thumbStyle: c.thumbStyle }));
   } catch { return seedCompetitors; }
+}
+export async function createCompetitor(ownerId: string, data: { handle: string }): Promise<Competitor> {
+  const raw = data.handle.trim();
+  const handle = raw.startsWith("@") || /^UC[\w-]{22}$/.test(raw) ? raw : `@${raw}`;
+  const stats = await fetchChannelStats(raw);
+  const row = await prisma.competitor.create({
+    data: {
+      id: globalThis.crypto?.randomUUID?.() ?? `${ownerId}-${Date.now()}`,
+      ownerId,
+      handle: stats?.handle ?? handle,
+      platform: "youtube",
+      subs: stats?.subscribers ?? 0,
+      growth: 0,
+      cadence: "Tracking",
+      topVideo: stats?.title ?? "—",
+      topViews: stats?.views ?? 0,
+      thumbStyle: "—",
+    },
+  });
+  return { id: row.id, handle: row.handle, platform: row.platform, subs: row.subs, growth: row.growth, cadence: row.cadence, topVideo: row.topVideo, topViews: row.topViews, thumbStyle: row.thumbStyle };
 }
 export async function getOpportunities(): Promise<Opportunity[]> {
   try { await ensureGlobalSeeded(); const rows = await prisma.opportunity.findMany();
