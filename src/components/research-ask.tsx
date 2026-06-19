@@ -2,7 +2,9 @@
 import { useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 
-export function ResearchAsk() {
+type Item = { title: string; summary: string; source: string; collection: string };
+
+export function ResearchAsk({ items = [] }: { items?: Item[] }) {
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer] = useState<string | null>(null);
@@ -11,11 +13,15 @@ export function ResearchAsk() {
     if (!q.trim()) return;
     setLoading(true);
     setAnswer(null);
+    const context = items.length
+      ? "\n\nSaved research items to ground your answer in:\n" +
+        items.map((i) => `- [${i.collection}] ${i.title} — ${i.summary} (${i.source})`).join("\n")
+      : "";
     try {
       const res = await fetch("/api/ai/generate", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: "research", topic: q.trim() }),
+        body: JSON.stringify({ type: "research", topic: q.trim() + context }),
       });
       const { text } = await res.json();
       setAnswer(text ?? "Couldn't answer — try again.");
@@ -44,7 +50,7 @@ export function ResearchAsk() {
       {answer ? (
         <div className="mt-3 rounded-lg border border-line bg-bg-soft p-3">
           <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-ink-muted">{answer}</pre>
-          <div className="mt-2 text-xs text-ink-faint">Grounded in creator-growth best practices · live from Claude</div>
+          <div className="mt-2 text-xs text-ink-faint">Grounded in your {items.length} saved item{items.length === 1 ? "" : "s"} · live from Claude</div>
         </div>
       ) : (
         <p className="mt-2 text-xs text-ink-faint">Answers are grounded in your saved items (RAG over your workspace).</p>
