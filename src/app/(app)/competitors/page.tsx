@@ -1,17 +1,20 @@
 import { getCompetitors } from "@/lib/store";
+import { auth } from "@clerk/nextjs/server";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { PlatformIcon } from "@/components/ui/platform";
+import { TrackChannelButton } from "@/components/track-channel-button";
 import { compact } from "@/lib/utils";
 import { Swords, TrendingUp, Lightbulb } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function CompetitorsPage() {
-  const competitors = await getCompetitors();
+  const { userId } = await auth();
+  const competitors = await getCompetitors(userId ?? undefined);
   return (
     <div>
       <PageHeader icon={<Swords size={18} />} title="Competitor Intelligence" subtitle="Track channels, decode why videos win, and find where rivals are exposed."
-        actions={<button className="btn-primary">+ Track channel</button>} />
+        actions={<TrackChannelButton />} />
 
       <Card className="!p-0 overflow-hidden">
         <table className="w-full text-sm">
