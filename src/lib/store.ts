@@ -173,7 +173,7 @@ export async function createCompetitor(ownerId: string, data: { handle: string }
       thumbStyle: "—",
     },
   });
-  return { id: row.id, handle: row.handle, platform: row.platform, subs: row.subs, growth: row.growth, cadence: row.cadence, topVideo: row.topVideo, topViews: row.topViews, thumbStyle: row.thumbStyle };
+  return { id: row.id, handle: row.handle, platform: row.platform as Competitor["platform"], subs: row.subs, growth: row.growth, cadence: row.cadence, topVideo: row.topVideo, topViews: row.topViews, thumbStyle: row.thumbStyle };
 }
 export async function getOpportunities(): Promise<Opportunity[]> {
   try { await ensureGlobalSeeded(); const rows = await prisma.opportunity.findMany();
