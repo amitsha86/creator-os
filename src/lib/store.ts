@@ -31,7 +31,7 @@ async function ensureGlobalSeeded() {
     globalSeedPromise = (async () => {
       await seedTable(() => prisma.research.count(), () => prisma.research.createMany({ data: seedResearch.map((r) => ({ ...r })), skipDuplicates: true }));
       await seedTable(() => prisma.calendarPost.count(), () => prisma.calendarPost.createMany({ data: seedCalendar.map((c) => ({ ...c })), skipDuplicates: true }));
-      await seedTable(() => prisma.competitor.count(), () => prisma.competitor.createMany({ data: seedCompetitors.map((c) => ({ ...c })), skipDuplicates: true }));
+      await seedTable(() => prisma.competitor.count(), () => prisma.competitor.createMany({ data: seedCompetitors.map((c) => ({ ...c, subs: BigInt(c.subs), topViews: BigInt(c.topViews) })), skipDuplicates: true }));
       await seedTable(() => prisma.opportunity.count(), () => prisma.opportunity.createMany({ data: seedOpportunities.map((o) => ({ ...o })), skipDuplicates: true }));
       await seedTable(() => prisma.teamMember.count(), () => prisma.teamMember.createMany({ data: seedTeam.map((t) => ({ id: t.name, ...t })), skipDuplicates: true }));
       await seedTable(() => prisma.recommendation.count(), () => prisma.recommendation.createMany({ data: seedRecs.map((r) => ({ ...r })), skipDuplicates: true }));
@@ -152,7 +152,7 @@ export async function getCompetitors(ownerId?: string): Promise<Competitor[]> {
     await ensureGlobalSeeded();
     const where = ownerId ? { OR: [{ ownerId: null }, { ownerId }] } : {};
     const rows = await prisma.competitor.findMany({ where, orderBy: { growth: "desc" } });
-    return rows.map((c: any) => ({ id: c.id, handle: c.handle, platform: c.platform, subs: c.subs, growth: c.growth, cadence: c.cadence, topVideo: c.topVideo, topViews: c.topViews, thumbStyle: c.thumbStyle }));
+    return rows.map((c: any) => ({ id: c.id, handle: c.handle, platform: c.platform, subs: Number(c.subs), growth: c.growth, cadence: c.cadence, topVideo: c.topVideo, topViews: Number(c.topViews), thumbStyle: c.thumbStyle }));
   } catch { return seedCompetitors; }
 }
 export async function createCompetitor(ownerId: string, data: { handle: string }): Promise<Competitor> {
@@ -165,15 +165,15 @@ export async function createCompetitor(ownerId: string, data: { handle: string }
       ownerId,
       handle: stats?.handle ?? handle,
       platform: "youtube",
-      subs: stats?.subscribers ?? 0,
+      subs: BigInt(stats?.subscribers ?? 0),
       growth: 0,
       cadence: "Tracking",
       topVideo: stats?.title ?? "—",
-      topViews: stats?.views ?? 0,
+      topViews: BigInt(stats?.views ?? 0),
       thumbStyle: "—",
     },
   });
-  return { id: row.id, handle: row.handle, platform: row.platform as Competitor["platform"], subs: row.subs, growth: row.growth, cadence: row.cadence, topVideo: row.topVideo, topViews: row.topViews, thumbStyle: row.thumbStyle };
+  return { id: row.id, handle: row.handle, platform: row.platform as Competitor["platform"], subs: Number(row.subs), growth: row.growth, cadence: row.cadence, topVideo: row.topVideo, topViews: Number(row.topViews), thumbStyle: row.thumbStyle };
 }
 export async function getOpportunities(): Promise<Opportunity[]> {
   try { await ensureGlobalSeeded(); const rows = await prisma.opportunity.findMany();
