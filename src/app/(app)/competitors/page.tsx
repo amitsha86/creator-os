@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { PlatformIcon } from "@/components/ui/platform";
 import { TrackChannelButton } from "@/components/track-channel-button";
+import { DeleteCompetitorButton } from "@/components/delete-competitor-button";
 import { compact } from "@/lib/utils";
 import { Swords, TrendingUp, Lightbulb } from "lucide-react";
 
@@ -26,6 +27,7 @@ export default async function CompetitorsPage() {
               <th className="px-4 py-3 font-medium">Cadence</th>
               <th className="px-4 py-3 font-medium">Top video</th>
               <th className="px-4 py-3 font-medium">Thumbnail style</th>
+              <th className="px-4 py-3 font-medium"></th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +39,7 @@ export default async function CompetitorsPage() {
                 <td className="px-4 py-3 text-ink-muted">{c.cadence}</td>
                 <td className="px-4 py-3"><span className="text-ink">{c.topVideo}</span><span className="ml-2 text-xs text-ink-faint">{compact(c.topViews)}</span></td>
                 <td className="px-4 py-3 text-ink-muted">{c.thumbStyle}</td>
+                <td className="px-4 py-3 text-right">{c.owned && <DeleteCompetitorButton id={c.id} handle={c.handle} />}</td>
               </tr>
             ))}
           </tbody>
