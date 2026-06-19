@@ -82,11 +82,11 @@ model Competitor {
   ownerId    String?
   handle     String
   platform   String
-  subs       Int
+  subs       BigInt
   growth     Float
   cadence    String
   topVideo   String
-  topViews   Int
+  topViews   BigInt
   thumbStyle String
 
   @@index([ownerId])
