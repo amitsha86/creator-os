@@ -6,6 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Briefcase } from "lucide-react";
 import { NewDealButton } from "@/components/new-deal-button";
+import { SponsorAgent } from "@/components/sponsor-agent";
 
 const STAGES: Deal["stage"][] = ["Prospect", "Outreach", "Negotiation", "Booked", "Delivered", "Paid"];
 const healthTone: Record<string, any> = { "On track": "mint", "At risk": "amber", Stalled: "rose" };
@@ -59,9 +60,7 @@ export default async function CRMPage() {
       </div>
 
       <Card className="mt-4 border-brand/30 bg-gradient-to-br from-brand/10 to-transparent">
-        <div className="text-sm font-medium text-ink">Sponsor agent</div>
-        <p className="mt-1 text-sm text-ink-muted">3 brands match your niche &amp; audience. Draft personalized outreach and a live media kit in one click.</p>
-        <div className="mt-2 flex gap-2"><button className="btn-primary h-8 px-3 text-xs">Draft outreach</button><button className="btn-ghost h-8 px-3 text-xs">Generate media kit</button></div>
+        <SponsorAgent niche="tech & maker / studio setups" />
       </Card>
     </div>
   );
