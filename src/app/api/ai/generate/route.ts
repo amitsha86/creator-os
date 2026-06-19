@@ -10,6 +10,10 @@ export async function POST(req: NextRequest) {
     tweet: `Write the opening of an engaging X thread for: "${topic}".`,
     linkedin: `Write an engaging LinkedIn post for: "${topic}".`,
     blog: `Write a blog intro + section outline for: "${topic}".`,
+    repurpose: `Repurpose a long-form video titled "${topic}" into a platform-native content pack. Output clearly labeled sections: TikTok/Reels (3 hook lines), Instagram (1 caption + 3 hashtags), X thread (5 tweets), LinkedIn (1 short post), Blog (title + 3 section headers). Keep each piece tight and ready to post.`,
+    outreach: `Write a personalized brand-sponsorship outreach email from a creator in the "${topic}" niche to a relevant brand. Warm, specific, and credible, with a clear call to action and a [rate placeholder]. Keep it under 160 words.`,
+    mediakit: `Create a creator media-kit one-pager in markdown for a "${topic}" creator. Sections: Audience snapshot, Top platforms, Engagement highlights, Past brand wins, Partnership options & rates. Use [bracketed placeholders] where real metrics go.`,
+    research: `You are the creator's research assistant answering over their saved research workspace. Answer this question concisely and practically with 2-4 bullet takeaways: "${topic}".`,
   };
   const prompt = map[type] ?? `Generate ${type} content for: "${topic}".`;
   const { text, live } = await generate(prompt, { maxTokens: 900 });
