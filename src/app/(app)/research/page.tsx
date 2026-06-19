@@ -30,7 +30,7 @@ export default async function ResearchPage() {
         </Card>
 
         <div className="space-y-3">
-          <ResearchAsk />
+          <ResearchAsk items={research.map((r) => ({ title: r.title, summary: r.summary, source: r.source, collection: r.collection }))} />
 
           {research.map((r) => {
             const Icon = kindIcon[r.kind];
