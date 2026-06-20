@@ -32,7 +32,7 @@ export function Badge({ children, tone = "default" }: { children: ReactNode; ton
   return <span className={cn("inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium", tones[tone])}>{children}</span>;
 }
 
-export function Spark({ data, color = "#6366f1", className }: { data: number[]; color?: string; className?: string }) {
+export function Spark({ data, color = "#2463EB", className }: { data: number[]; color?: string; className?: string }) {
   const max = Math.max(...data), min = Math.min(...data);
   const range = max - min || 1;
   const pts = data.map((v, i) => `${(i / (data.length - 1)) * 100},${28 - ((v - min) / range) * 26}`).join(" ");
@@ -72,10 +72,10 @@ export function ScoreRing({ value, size = 56, label }: { value: number; size?: n
   return (
     <div className="flex flex-col items-center gap-1">
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#23262f" strokeWidth="5" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(59,23,34,0.10)" strokeWidth="5" />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth="5" strokeLinecap="round"
           strokeDasharray={circ} strokeDashoffset={circ - (value / 100) * circ} />
-        <text x="50%" y="50%" dy="0.35em" textAnchor="middle" className="rotate-90" style={{ transformOrigin: "center" }} fill="#e7e9ee" fontSize="14" fontWeight="600">{value}</text>
+        <text x="50%" y="50%" dy="0.35em" textAnchor="middle" className="rotate-90" style={{ transformOrigin: "center" }} fill="#3B1722" fontSize="14" fontWeight="600">{value}</text>
       </svg>
       {label && <span className="text-[10px] uppercase tracking-wide text-ink-faint">{label}</span>}
     </div>
