@@ -22,25 +22,25 @@ export const metadata: Metadata = {
 
 const clerkAppearance = {
   variables: {
-    colorPrimary: "#6366f1",
-    colorBackground: "#12141c",
-    colorInputBackground: "#0e1016",
-    colorInputText: "#e7e9ee",
-    colorText: "#e7e9ee",
-    colorTextSecondary: "#9aa1ad",
-    colorNeutral: "#e7e9ee",
-    borderRadius: "0.6rem",
+    colorPrimary: "#2463EB",
+    colorBackground: "#FBFAF6",
+    colorInputBackground: "#FFFFFF",
+    colorInputText: "#3B1722",
+    colorText: "#3B1722",
+    colorTextSecondary: "#7A6B6B",
+    colorNeutral: "#3B1722",
+    borderRadius: "0.9rem",
   },
   elements: {
-    card: "bg-bg-panel border border-line",
-    socialButtonsBlockButton: "border-line",
+    card: "bg-white border border-[rgba(59,23,34,0.12)] shadow-none",
+    socialButtonsBlockButton: "border-[rgba(59,23,34,0.12)]",
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider appearance={clerkAppearance}>
-      <html lang="en" className="dark">
+      <html lang="en">
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
