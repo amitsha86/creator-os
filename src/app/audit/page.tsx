@@ -2,13 +2,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { auditResult } from "@/data/mockCreoraData";
-import { Sparkles, ArrowRight, Check, X, TrendingUp, Loader2, Target, Calendar } from "lucide-react";
+import { Sparkles, ArrowRight, Check, X, TrendingUp, Loader2, Target, Calendar, Lock, Lightbulb, Repeat, PenLine } from "lucide-react";
 
 type Stage = "form" | "loading" | "result";
 
 function Pill({ children, tone = "cream" }: { children: React.ReactNode; tone?: "lime" | "purple" | "cream" }) {
   return <span className={`creora-pill creora-pill-${tone}`}>{children}</span>;
 }
+
+const previewCards = [
+  { Icon: TrendingUp, title: "Your Growth Score", desc: "A 0–100 score with exactly what's working and what's holding you back." },
+  { Icon: Lightbulb, title: "10 video ideas", desc: "Ready-to-make ideas with hooks, formats, and viral scores." },
+  { Icon: Calendar, title: "30-day content plan", desc: "A week-by-week plan so you always know what to publish next." },
+  { Icon: Repeat, title: "Repurpose angles", desc: "Turn each idea into Shorts, posts, threads, and a newsletter." },
+];
 
 export default function AuditPage() {
   const [stage, setStage] = useState<Stage>("form");
@@ -57,6 +64,22 @@ export default function AuditPage() {
             <button type="submit" className="creora-btn creora-btn-blue w-full">Generate My Free Audit <ArrowRight size={16} /></button>
             <p className="text-center text-xs text-[#7A6B6B]">No card required · We never post without your permission.</p>
           </form>
+
+          {/* What you'll get */}
+          <div className="mt-12 text-left">
+            <div className="text-center text-xs font-semibold uppercase tracking-wide text-[#7A6B6B]">What you&apos;ll get</div>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {previewCards.map(({ Icon, title, desc }) => (
+                <div key={title} className="creora-card creora-card-tight flex gap-3 p-5">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full" style={{ background: "#B9FF1D" }}><Icon size={17} className="text-[#2a2208]" /></div>
+                  <div>
+                    <div className="font-semibold text-[#3B1722]">{title}</div>
+                    <div className="mt-0.5 text-[13px] text-[#7A6B6B]">{desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
       )}
 
@@ -88,9 +111,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function AuditReport() {
   const a = auditResult;
+  const previewIdeas = a.ideas.slice(0, 3);
+  const lockedCount = a.ideas.length - previewIdeas.length;
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+
   return (
     <section className="mx-auto max-w-5xl px-5 py-10">
-      <div className="flex items-center gap-2"><Pill tone="lime"><Sparkles size={13} /> Your audit is ready</Pill></div>
+      <div className="flex items-center gap-2"><Pill tone="lime"><Sparkles size={13} /> Your free audit preview</Pill></div>
 
       {/* Score */}
       <div className="creora-card mt-5 flex flex-col items-center gap-6 p-8 md:flex-row md:p-10">
@@ -102,20 +130,20 @@ function AuditReport() {
         </div>
         <div>
           <div className="flex items-center gap-2"><TrendingUp size={18} className="text-[#2463EB]" /><span className="creora-display text-2xl text-[#3B1722]">Your channel is {a.trend}.</span></div>
-          <p className="mt-2 text-[#7A6B6B]">Here's exactly what's working, what's holding you back, and the 10 videos to make next.</p>
+          <p className="mt-2 text-[#7A6B6B]">Here&apos;s a preview of what&apos;s working, what&apos;s holding you back, and your first few ideas. Unlock the full audit free to see all 10.</p>
         </div>
       </div>
 
       {/* Working / Not working */}
       <div className="mt-5 grid gap-5 md:grid-cols-2">
         <div className="creora-card p-6">
-          <div className="flex items-center gap-2 font-semibold text-[#3B1722]"><Check size={18} className="text-[#2463EB]" /> What's working</div>
+          <div className="flex items-center gap-2 font-semibold text-[#3B1722]"><Check size={18} className="text-[#2463EB]" /> What&apos;s working</div>
           <ul className="mt-3 space-y-2 text-[15px] text-[#3B1722]">
             {a.working.map((w) => <li key={w} className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-[#2463EB]" /> {w}</li>)}
           </ul>
         </div>
         <div className="creora-card p-6">
-          <div className="flex items-center gap-2 font-semibold text-[#3B1722]"><X size={18} className="text-[#7A6B6B]" /> What's holding you back</div>
+          <div className="flex items-center gap-2 font-semibold text-[#3B1722]"><X size={18} className="text-[#7A6B6B]" /> What&apos;s holding you back</div>
           <ul className="mt-3 space-y-2 text-[15px] text-[#3B1722]">
             {a.notWorking.map((w) => <li key={w} className="flex gap-2"><X size={16} className="mt-0.5 shrink-0 text-[#7A6B6B]" /> {w}</li>)}
           </ul>
@@ -130,10 +158,13 @@ function AuditReport() {
         </div>
       </div>
 
-      {/* 10 ideas */}
-      <h2 className="creora-display mt-10 text-[clamp(24px,4vw,36px)] text-[#3B1722]">Your next 10 videos.</h2>
+      {/* Preview ideas */}
+      <div className="mt-10 flex items-end justify-between">
+        <h2 className="creora-display text-[clamp(24px,4vw,36px)] text-[#3B1722]">Your first 3 ideas.</h2>
+        <span className="text-sm text-[#7A6B6B]">{lockedCount} more in the full audit</span>
+      </div>
       <div className="mt-5 grid gap-4 md:grid-cols-2">
-        {a.ideas.map((idea, i) => (
+        {previewIdeas.map((idea, i) => (
           <div key={i} className="creora-card p-5">
             <div className="flex items-start justify-between gap-3">
               <span className="text-sm font-semibold leading-snug text-[#3B1722]">{idea.title}</span>
@@ -149,23 +180,41 @@ function AuditReport() {
         ))}
       </div>
 
-      {/* 30-day plan */}
-      <h2 className="creora-display mt-10 text-[clamp(24px,4vw,36px)] text-[#3B1722]">Your 30-day plan.</h2>
-      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {a.plan.map((p) => (
-          <div key={p.week} className="creora-card p-5">
-            <div className="flex items-center gap-2 text-sm font-semibold text-[#2463EB]"><Calendar size={15} /> {p.week}</div>
-            <div className="mt-2 font-semibold text-[#3B1722]">{p.focus}</div>
-            <div className="mt-1 text-[13px] text-[#7A6B6B]">{p.note}</div>
-          </div>
-        ))}
+      {/* Locked / unlock + email capture */}
+      <div className="creora-card relative mt-6 overflow-hidden p-8 text-center md:p-12" style={{ background: "linear-gradient(135deg, #2463EB, #1d3fb0)" }}>
+        <div className="grid h-12 w-12 mx-auto place-items-center rounded-full bg-white/15"><Lock size={22} className="text-white" /></div>
+        <h2 className="creora-display mt-4 text-[clamp(24px,4vw,38px)] text-white">Unlock your full audit — free.</h2>
+        <p className="mx-auto mt-3 max-w-md text-white/85">Get all {a.ideas.length} ideas, your 30-day content plan, script previews, and repurpose packs.</p>
+
+        <div className="mx-auto mt-5 flex max-w-md flex-col gap-2">
+          <Link href="/sign-up" className="creora-btn bg-[#B9FF1D] text-[#2a2208] hover:bg-[#a9ee10]">Unlock Full Audit Free <ArrowRight size={16} /></Link>
+          {!sent ? (
+            <form onSubmit={(e) => { e.preventDefault(); if (email) setSent(true); }} className="mt-2 flex flex-col gap-2 sm:flex-row">
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Or email me the full audit" className="creora-input flex-1 !bg-white/95" />
+              <button type="submit" className="creora-btn creora-btn-cream whitespace-nowrap">Email it to me</button>
+            </form>
+          ) : (
+            <p className="mt-2 flex items-center justify-center gap-2 text-sm text-white"><Check size={16} className="text-[#B9FF1D]" /> Done — we&apos;ll send your full audit to {email}.</p>
+          )}
+          <p className="mt-1 text-xs text-white/70">No card required · Unsubscribe anytime.</p>
+        </div>
       </div>
 
-      {/* CTA */}
-      <div className="creora-card mt-10 p-8 text-center md:p-12" style={{ background: "linear-gradient(135deg, #2463EB, #1d3fb0)" }}>
-        <h2 className="creora-display text-[clamp(26px,4vw,42px)] text-white">Turn this audit into published videos.</h2>
-        <p className="mx-auto mt-3 max-w-lg text-white/85">Create a free account to generate scripts, repurpose content, and track your growth.</p>
-        <Link href="/sign-up" className="creora-btn mt-7 bg-[#B9FF1D] text-[#2a2208] hover:bg-[#a9ee10]">Create Free Account <ArrowRight size={16} /></Link>
+      {/* Locked teaser: what's inside */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        {[
+          { Icon: Lightbulb, label: `${lockedCount} more video ideas`, sub: "With hooks, formats & viral scores" },
+          { Icon: Calendar, label: "Full 30-day plan", sub: "Week-by-week, ready to publish" },
+          { Icon: PenLine, label: "Script + repurpose previews", sub: "Turn ideas into finished assets" },
+        ].map(({ Icon, label, sub }) => (
+          <div key={label} className="creora-card creora-card-tight flex items-center gap-3 p-5 opacity-90">
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full" style={{ background: "#DDD0C9" }}><Icon size={17} className="text-[#3B1722]" /></div>
+            <div>
+              <div className="flex items-center gap-1.5 text-sm font-semibold text-[#3B1722]"><Lock size={12} className="text-[#7A6B6B]" /> {label}</div>
+              <div className="text-[12px] text-[#7A6B6B]">{sub}</div>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
