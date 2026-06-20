@@ -56,7 +56,7 @@ export function Sidebar() {
     <aside className="flex h-full w-60 shrink-0 flex-col border-r border-line bg-bg-soft">
       <div className="flex h-14 items-center gap-2 px-4">
         <div className="grid h-7 w-7 place-items-center rounded-md bg-brand text-sm font-bold text-white">C</div>
-        <span className="text-sm font-semibold tracking-tight text-ink">CreatorOS</span>
+        <span className="text-sm font-semibold tracking-tight text-ink">Creora</span>
         <span className="ml-auto rounded border border-line px-1.5 py-0.5 text-[10px] text-ink-faint">v0.1</span>
       </div>
 

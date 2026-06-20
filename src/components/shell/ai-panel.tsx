@@ -14,7 +14,7 @@ const SUGGESTIONS = [
 
 export function AIPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [msgs, setMsgs] = useState<Msg[]>([
-    { role: "ai", text: "Hi Maya 👋 I'm your CreatorOS assistant. Ask me what to make next, why a metric moved, or to draft anything. I see your channel data." },
+    { role: "ai", text: "Hi Maya 👋 I'm your Creora assistant. Ask me what to make next, why a metric moved, or to draft anything. I see your channel data." },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
