@@ -50,7 +50,7 @@ export const channel = {
   name: "Maya Builds",
   handle: "@mayabuilds",
   niche: "Tech & maker / studio setups",
-  avatarColor: "#6366f1",
+  avatarColor: "#2463EB",
   growthScore: 78,
   goal: { label: "250k subscribers by Dec", current: 85200, target: 250000, pace: "On pace · Nov" },
 };
@@ -124,7 +124,7 @@ export const deals: Deal[] = [
 ];
 
 export const revenueStreams: RevenueStream[] = [
-  { stream: "Sponsorships", amount: 18500, delta: 14, color: "#6366f1" },
+  { stream: "Sponsorships", amount: 18500, delta: 14, color: "#2463EB" },
   { stream: "Ad revenue", amount: 6200, delta: 8, color: "#0ea5e9" },
   { stream: "Affiliate", amount: 3100, delta: 22, color: "#10b981" },
   { stream: "Products / merch", amount: 2400, delta: -4, color: "#f59e0b" },
@@ -148,7 +148,7 @@ export const research: ResearchItem[] = [
 ];
 
 export const team: TeamMember[] = [
-  { name: "Maya", role: "Owner / Creator", initials: "MB", color: "#6366f1" },
+  { name: "Maya", role: "Owner / Creator", initials: "MB", color: "#2463EB" },
   { name: "Dev", role: "Strategist", initials: "DV", color: "#0ea5e9" },
   { name: "Sam", role: "Writer", initials: "SM", color: "#10b981" },
   { name: "Leo", role: "Editor", initials: "LO", color: "#f59e0b" },
@@ -181,7 +181,7 @@ export const repurposeTargets = [
 ];
 
 export const agents = [
-  { name: "Research", color: "#6366f1", desc: "Trends, competitor teardowns, evidence", status: "Ran 12m ago" },
+  { name: "Research", color: "#2463EB", desc: "Trends, competitor teardowns, evidence", status: "Ran 12m ago" },
   { name: "Script", color: "#0ea5e9", desc: "High-retention scripts + scoring", status: "Idle" },
   { name: "Thumbnail", color: "#10b981", desc: "Generate + predict CTR", status: "Idle" },
   { name: "SEO", color: "#f59e0b", desc: "Titles, tags, timing", status: "Ran 2h ago" },
