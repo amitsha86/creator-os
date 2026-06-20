@@ -38,7 +38,7 @@ export default async function ViralPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-3"><Spark data={o.spark} color="#6366f1" /></div>
+            <div className="mt-3"><Spark data={o.spark} color="#2463EB" /></div>
             <p className="mt-2 text-sm text-ink-muted"><span className="text-ink-faint">Why now:</span> {o.why}</p>
             <div className="mt-3 flex items-center gap-2">
               <OpportunityActions title={o.title} format={o.format} />
