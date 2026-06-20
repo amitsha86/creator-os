@@ -8,19 +8,19 @@
 }
 
 html, body {
-  background: #E9E3D9;
-  color: #3B1722;
+  background: #EEF2F8;
+  color: #0F172A;
   -webkit-font-smoothing: antialiased;
 }
 
-* { border-color: rgba(59,23,34,0.12); }
+* { border-color: rgba(15,23,42,0.12); }
 
-::selection { background: rgba(185,255,29,0.45); color: #3B1722; }
+::selection { background: rgba(190,242,100,0.45); color: #0F172A; }
 
 /* Scrollbars */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb { background: #CDBDB6; border-radius: 6px; border: 2px solid #E9E3D9; }
-::-webkit-scrollbar-thumb:hover { background: #b8a79f; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 6px; border: 2px solid #EEF2F8; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 ::-webkit-scrollbar-track { background: transparent; }
 
 @layer components {
@@ -59,38 +59,39 @@ html, body {
 
 .scroll-thin { scrollbar-width: thin; }
 .bg-grid {
-  background-image: radial-gradient(circle at 1px 1px, rgba(59,23,34,0.05) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgba(15,23,42,0.05) 1px, transparent 0);
   background-size: 22px 22px;
 }
 
 /* ---------- Creora marketing (light, premium) ---------- */
 .creora-root {
   background:
-    radial-gradient(900px 500px at 85% -5%, rgba(185,255,29,0.10), transparent 60%),
-    radial-gradient(800px 500px at 0% 100%, rgba(36,99,235,0.08), transparent 55%),
-    #F2F0EA;
-  color: #3B1722;
+    radial-gradient(900px 520px at 88% -8%, rgba(190,242,100,0.16), transparent 60%),
+    radial-gradient(820px 520px at -5% 5%, rgba(124,58,237,0.10), transparent 55%),
+    radial-gradient(900px 600px at 10% 105%, rgba(37,99,235,0.12), transparent 55%),
+    #EEF2F8;
+  color: #0F172A;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
-.creora-root ::selection { background: rgba(185,255,29,0.45); color: #3B1722; }
+.creora-root ::selection { background: rgba(190,242,100,0.45); color: #0F172A; }
 .creora-display { font-family: var(--font-display); letter-spacing: -0.04em; line-height: 0.98; font-weight: 600; }
 .creora-card {
-  background: #F2F0EA;
-  border: 1px solid rgba(59,23,34,0.10);
+  background: #FFFFFF;
+  border: 1px solid rgba(15,23,42,0.10);
   border-radius: 28px;
-  box-shadow: 0 18px 60px rgba(20,10,10,0.10);
+  box-shadow: 0 18px 60px rgba(15,23,42,0.10);
 }
 .creora-card-tight { border-radius: 22px; }
 .creora-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 999px; font-weight: 500; transition: all .2s ease; padding: 0.85rem 1.5rem; font-size: 0.95rem; }
 .creora-btn-blue { background: #2463EB; color: #fff; box-shadow: 0 10px 26px -8px rgba(36,99,235,0.6); }
 .creora-btn-blue:hover { background: #1d54cf; transform: translateY(-1px); }
-.creora-btn-cream { background: #F2F0EA; color: #3B1722; border: 1px solid rgba(59,23,34,0.14); }
-.creora-btn-cream:hover { background: #fff; }
+.creora-btn-cream { background: #F1F5F9; color: #0F172A; border: 1px solid rgba(15,23,42,0.12); }
+.creora-btn-cream:hover { background: #E2E8F0; }
 .creora-pill { display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.78rem; font-weight: 600; }
-.creora-pill-lime { background: #B9FF1D; color: #2a2208; }
-.creora-pill-purple { background: #D8B4FE; color: #3B1722; }
-.creora-pill-cream { background: rgba(59,23,34,0.06); color: #7A6B6B; }
-.creora-input { width: 100%; border-radius: 14px; border: 1px solid rgba(59,23,34,0.14); background: #fff; padding: 0.7rem 0.9rem; font-size: 0.95rem; color: #3B1722; outline: none; }
+.creora-pill-lime { background: #BEF264; color: #1A2E05; }
+.creora-pill-purple { background: #D8B4FE; color: #0F172A; }
+.creora-pill-cream { background: rgba(15,23,42,0.06); color: #64748B; }
+.creora-input { width: 100%; border-radius: 14px; border: 1px solid rgba(15,23,42,0.14); background: #fff; padding: 0.7rem 0.9rem; font-size: 0.95rem; color: #0F172A; outline: none; }
 .creora-input:focus { border-color: #2463EB; box-shadow: 0 0 0 3px rgba(36,99,235,0.15); }
-.creora-input::placeholder { color: #A8988F; }
+.creora-input::placeholder { color: #94A3B8; }

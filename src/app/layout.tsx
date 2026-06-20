@@ -23,17 +23,17 @@ export const metadata: Metadata = {
 const clerkAppearance = {
   variables: {
     colorPrimary: "#2463EB",
-    colorBackground: "#FBFAF6",
+    colorBackground: "#FFFFFF",
     colorInputBackground: "#FFFFFF",
-    colorInputText: "#3B1722",
-    colorText: "#3B1722",
-    colorTextSecondary: "#7A6B6B",
-    colorNeutral: "#3B1722",
+    colorInputText: "#0F172A",
+    colorText: "#0F172A",
+    colorTextSecondary: "#64748B",
+    colorNeutral: "#0F172A",
     borderRadius: "0.9rem",
   },
   elements: {
-    card: "bg-white border border-[rgba(59,23,34,0.12)] shadow-none",
-    socialButtonsBlockButton: "border-[rgba(59,23,34,0.12)]",
+    card: "bg-white border border-[rgba(15,23,42,0.12)] shadow-none",
+    socialButtonsBlockButton: "border-[rgba(15,23,42,0.12)]",
   },
 };
 
