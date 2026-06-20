@@ -229,6 +229,7 @@ export default function CreoraHome() {
         <div className="text-center">
           <Pill tone="purple">Pricing</Pill>
           <h2 className="creora-display mt-4 text-[clamp(28px,4vw,46px)] text-[#3B1722]">Start free. Grow into it.</h2>
+          <p className="mx-auto mt-3 max-w-md text-[#7A6B6B]">Clear monthly limits, no surprises. Upgrade only when you outgrow your plan — cancel anytime.</p>
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {pricingPlans.map((p) => (
@@ -240,6 +241,7 @@ export default function CreoraHome() {
                 {p.per && <span className="mb-1 text-sm text-[#7A6B6B]">{p.per}</span>}
               </div>
               <div className="mt-1 text-sm text-[#7A6B6B]">{p.tagline}</div>
+              <div className="mt-3 rounded-[12px] px-3 py-2 text-[12px] font-semibold text-[#3B1722]" style={{ background: "#DDD0C9" }}>{p.limit}</div>
               <ul className="mt-4 flex-1 space-y-2 text-sm text-[#3B1722]">
                 {p.features.map((f) => <li key={f} className="flex gap-2"><Check size={15} className="mt-0.5 shrink-0 text-[#2463EB]" /> {f}</li>)}
               </ul>
