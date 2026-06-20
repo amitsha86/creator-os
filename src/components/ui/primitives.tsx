@@ -72,10 +72,10 @@ export function ScoreRing({ value, size = 56, label }: { value: number; size?: n
   return (
     <div className="flex flex-col items-center gap-1">
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(59,23,34,0.10)" strokeWidth="5" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(15,23,42,0.10)" strokeWidth="5" />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth="5" strokeLinecap="round"
           strokeDasharray={circ} strokeDashoffset={circ - (value / 100) * circ} />
-        <text x="50%" y="50%" dy="0.35em" textAnchor="middle" className="rotate-90" style={{ transformOrigin: "center" }} fill="#3B1722" fontSize="14" fontWeight="600">{value}</text>
+        <text x="50%" y="50%" dy="0.35em" textAnchor="middle" className="rotate-90" style={{ transformOrigin: "center" }} fill="#0F172A" fontSize="14" fontWeight="600">{value}</text>
       </svg>
       {label && <span className="text-[10px] uppercase tracking-wide text-ink-faint">{label}</span>}
     </div>
