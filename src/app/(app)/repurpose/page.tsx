@@ -2,10 +2,25 @@ import { content } from "@/lib/data";
 import { Card, PageHeader } from "@/components/ui/primitives";
 import { PlatformIcon } from "@/components/ui/platform";
 import { RepurposePack } from "@/components/repurpose-pack";
+import { EmptyState } from "@/components/ui/states";
 import { Repeat, ArrowRight, Scissors } from "lucide-react";
 
 export default function RepurposePage() {
   const source = content.find((c) => c.stage === "Analyze") ?? content[0];
+  if (!source) {
+    return (
+      <div>
+        <PageHeader icon={<Repeat size={18} />} title="AI Repurposing Engine" subtitle="Turn one long-form video into a week of platform-native content — automatically." />
+        <EmptyState
+          icon={<Repeat size={22} />}
+          title="Nothing to repurpose yet"
+          description="Once you publish or add a long-form video, Creora detects the best moments and turns it into Shorts, posts, threads, and a newsletter."
+          actionLabel="Go to Pipeline"
+          actionHref="/pipeline"
+        />
+      </div>
+    );
+  }
   return (
     <div>
       <PageHeader icon={<Repeat size={18} />} title="AI Repurposing Engine" subtitle="Turn one long-form video into a week of platform-native content — automatically." />
