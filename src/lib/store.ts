@@ -79,6 +79,10 @@ export async function moveContent(id: string, ownerId: string, stage: Stage): Pr
   const res = await prisma.content.updateMany({ where: { id, ownerId }, data: { stage } });
   return res.count > 0;
 }
+export async function deleteContent(ownerId: string, id: string): Promise<boolean> {
+  const res = await prisma.content.deleteMany({ where: { id, ownerId } });
+  return res.count > 0;
+}
 export async function createContent(ownerId: string, data: { title: string; type?: string; stage?: Stage; platform?: string; priority?: string }): Promise<ContentItem> {
   const row = await prisma.content.create({
     data: {
@@ -146,6 +150,10 @@ export async function getCalendarPosts(): Promise<CalendarPost[]> {
   try { await ensureGlobalSeeded(); const rows = await prisma.calendarPost.findMany();
     return rows.map((c: any) => ({ id: c.id, title: c.title, platform: c.platform, day: c.day, time: c.time }));
   } catch { return seedCalendar; }
+}
+export async function moveCalendarPost(id: string, day: number): Promise<boolean> {
+  const res = await prisma.calendarPost.updateMany({ where: { id }, data: { day } });
+  return res.count > 0;
 }
 export async function getCompetitors(ownerId?: string): Promise<(Competitor & { owned: boolean })[]> {
   try {
