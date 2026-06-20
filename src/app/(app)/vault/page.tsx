@@ -19,7 +19,7 @@ export default async function VaultPage() {
       <VaultBrowser items={vault} />
 
       <Card className="mt-4 border-brand/30 bg-gradient-to-br from-brand/10 to-transparent">
-        <p className="text-sm text-ink-muted"><span className="text-ink">Performance-weighted retrieval:</span> every agent pulls from the Vault, favoring artifacts that historically performed — so your AI gets sharper the longer you use CreatorOS.</p>
+        <p className="text-sm text-ink-muted"><span className="text-ink">Performance-weighted retrieval:</span> every agent pulls from the Vault, favoring artifacts that historically performed — so your AI gets sharper the longer you use Creora.</p>
       </Card>
     </div>
   );
