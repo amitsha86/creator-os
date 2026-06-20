@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 html, body {
@@ -61,3 +62,35 @@ html, body {
   background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
   background-size: 22px 22px;
 }
+
+/* ---------- Creora marketing (light, premium) ---------- */
+.creora-root {
+  background:
+    radial-gradient(900px 500px at 85% -5%, rgba(185,255,29,0.10), transparent 60%),
+    radial-gradient(800px 500px at 0% 100%, rgba(36,99,235,0.08), transparent 55%),
+    #F2F0EA;
+  color: #3B1722;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+.creora-root ::selection { background: rgba(185,255,29,0.45); color: #3B1722; }
+.creora-display { font-family: var(--font-display); letter-spacing: -0.04em; line-height: 0.98; font-weight: 600; }
+.creora-card {
+  background: #F2F0EA;
+  border: 1px solid rgba(59,23,34,0.10);
+  border-radius: 28px;
+  box-shadow: 0 18px 60px rgba(20,10,10,0.10);
+}
+.creora-card-tight { border-radius: 22px; }
+.creora-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 999px; font-weight: 500; transition: all .2s ease; padding: 0.85rem 1.5rem; font-size: 0.95rem; }
+.creora-btn-blue { background: #2463EB; color: #fff; box-shadow: 0 10px 26px -8px rgba(36,99,235,0.6); }
+.creora-btn-blue:hover { background: #1d54cf; transform: translateY(-1px); }
+.creora-btn-cream { background: #F2F0EA; color: #3B1722; border: 1px solid rgba(59,23,34,0.14); }
+.creora-btn-cream:hover { background: #fff; }
+.creora-pill { display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.78rem; font-weight: 600; }
+.creora-pill-lime { background: #B9FF1D; color: #2a2208; }
+.creora-pill-purple { background: #D8B4FE; color: #3B1722; }
+.creora-pill-cream { background: rgba(59,23,34,0.06); color: #7A6B6B; }
+.creora-input { width: 100%; border-radius: 14px; border: 1px solid rgba(59,23,34,0.14); background: #fff; padding: 0.7rem 0.9rem; font-size: 0.95rem; color: #3B1722; outline: none; }
+.creora-input:focus { border-color: #2463EB; box-shadow: 0 0 0 3px rgba(36,99,235,0.15); }
+.creora-input::placeholder { color: #A8988F; }
