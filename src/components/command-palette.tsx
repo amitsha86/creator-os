@@ -10,7 +10,7 @@ import {
 type Item = { href: string; label: string; group: string; Icon: any };
 
 const ITEMS: Item[] = [
-  { href: "/", label: "Dashboard", group: "Intelligence", Icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", group: "Intelligence", Icon: LayoutDashboard },
   { href: "/viral", label: "Viral Intelligence", group: "Intelligence", Icon: Flame },
   { href: "/competitors", label: "Competitors", group: "Intelligence", Icon: Swords },
   { href: "/research", label: "Research", group: "Intelligence", Icon: BookOpen },
