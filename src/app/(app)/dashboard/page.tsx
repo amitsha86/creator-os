@@ -57,12 +57,12 @@ export default async function DashboardPage() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Growth Score */}
-        <div className="rounded-[20px] p-6 shadow-card" style={{ background: "#3B1722" }}>
-          <div className="text-sm text-[#CDBDB6]">Creator Growth Score</div>
-          <div className="font-display mt-2 text-5xl font-semibold text-[#B9FF1D]">{channel.growthScore}<span className="text-xl text-[#CDBDB6]">/100</span></div>
-          <div className="mt-2 text-sm text-[#DDD0C9]">{growth.trend}</div>
-          <div className="mt-1 text-sm text-[#DDD0C9]">Main opportunity: <span className="text-[#F2F0EA]">{growth.opportunity}</span></div>
-          <Link href="/coach" className="btn mt-4 w-full bg-[#B9FF1D] text-[#2a2208] hover:bg-[#a9ee10]">Open Growth Coach <ArrowRight size={15} /></Link>
+        <div className="rounded-[20px] p-6 shadow-card" style={{ background: "#0F172A" }}>
+          <div className="text-sm text-[#CBD5E1]">Creator Growth Score</div>
+          <div className="font-display mt-2 text-5xl font-semibold text-[#BEF264]">{channel.growthScore}<span className="text-xl text-[#CBD5E1]">/100</span></div>
+          <div className="mt-2 text-sm text-[#E7EDF6]">{growth.trend}</div>
+          <div className="mt-1 text-sm text-[#E7EDF6]">Main opportunity: <span className="text-[#FFFFFF]">{growth.opportunity}</span></div>
+          <Link href="/coach" className="btn mt-4 w-full bg-[#BEF264] text-[#1A2E05] hover:bg-[#a3e635]">Open Growth Coach <ArrowRight size={15} /></Link>
         </div>
 
         {/* Next Best Idea */}
@@ -131,7 +131,7 @@ export default async function DashboardPage() {
           <ul className="space-y-2 text-[14px] text-ink">
             {coach.map((r, i) => (
               <li key={r.id} className="flex gap-2">
-                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#B9FF1D] text-[11px] font-bold text-[#2a2208]">{i + 1}</span>
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#BEF264] text-[11px] font-bold text-[#1A2E05]">{i + 1}</span>
                 {r.action}
               </li>
             ))}
