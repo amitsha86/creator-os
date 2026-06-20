@@ -1,5 +1,5 @@
 import { getCalendarPosts } from "@/lib/store";
-import { Card, Badge, PageHeader } from "@/components/ui/primitives";
+import { Card, Badge, PageHeader, EmptyHint } from "@/components/ui/primitives";
 import { CalendarBoard } from "@/components/calendar-board";
 import { CalendarDays, Clock } from "lucide-react";
 
@@ -11,6 +11,10 @@ export default async function CalendarPage() {
     <div>
       <PageHeader icon={<CalendarDays size={18} />} title="Content Calendar" subtitle="Plan and schedule across every platform. Drag to reschedule; best-time slots are suggested."
         actions={<div className="flex gap-2"><button className="btn-ghost">Month</button><button className="btn-primary">Week</button></div>} />
+
+      {calendarPosts.length === 0 && (
+        <div className="mb-4"><EmptyHint>Your week is open — nothing scheduled yet. Drag ideas onto a day, or generate a 30-day plan from your audit.</EmptyHint></div>
+      )}
 
       <CalendarBoard initial={calendarPosts} />
 
