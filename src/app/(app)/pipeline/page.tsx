@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { STAGES, type Stage, type ContentItem } from "@/lib/data";
 import { Badge, PageHeader } from "@/components/ui/primitives";
 import { PlatformIcon } from "@/components/ui/platform";
-import { KanbanSquare, Loader2 } from "lucide-react";
+import { KanbanSquare, Loader2, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const prioTone: Record<string, any> = { High: "rose", Med: "amber", Low: "default" };
@@ -36,6 +36,18 @@ export default function PipelinePage() {
       if (data.item) setItems((it) => [...it, data.item]);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function del(id: string) {
+    if (!window.confirm("Delete this card? This can't be undone.")) return;
+    const prev = items;
+    setItems((it) => it.filter((c) => c.id !== id));
+    try {
+      const res = await fetch(`/api/content/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("delete failed");
+    } catch {
+      setItems(prev);
     }
   }
 
@@ -88,10 +100,14 @@ export default function PipelinePage() {
                 <div className="space-y-2">
                   {col.map((c) => (
                     <div key={c.id} draggable onDragStart={() => setDragId(c.id)}
-                      className="cursor-grab rounded-lg border border-line bg-bg-panel p-2.5 shadow-card transition-shadow hover:border-brand/40 active:cursor-grabbing">
+                      className="group cursor-grab rounded-lg border border-line bg-bg-panel p-2.5 shadow-card transition-shadow hover:border-brand/40 active:cursor-grabbing">
                       <div className="flex items-start gap-2">
                         <PlatformIcon platform={c.platform} size={13} />
                         <span className="text-sm leading-snug text-ink">{c.title}</span>
+                        <button onClick={() => del(c.id)} title="Delete card"
+                          className="ml-auto shrink-0 rounded p-0.5 text-ink-faint opacity-0 transition-opacity hover:text-rose group-hover:opacity-100">
+                          <Trash2 size={13} />
+                        </button>
                       </div>
                       <div className="mt-2 flex items-center gap-1.5">
                         <Badge tone={prioTone[c.priority]}>{c.priority}</Badge>
