@@ -3,8 +3,21 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CreatorOS — The Operating System for Creators",
-  description: "Discover what to make, create it with an AI team, ship it everywhere, and run the business behind it.",
+  metadataBase: new URL("https://creora.pro"),
+  title: "Creora — AI Growth Copilot for Creators",
+  description: "Know what to create next. Creora helps creators discover content ideas, generate scripts, repurpose content, and grow faster with AI.",
+  openGraph: {
+    title: "Creora — Know What To Create Next",
+    description: "Analyze your channel, find content opportunities, generate scripts, and repurpose your content with AI.",
+    url: "https://creora.pro",
+    siteName: "Creora",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Creora — Know What To Create Next",
+    description: "Analyze your channel, find content opportunities, generate scripts, and repurpose your content with AI.",
+  },
 };
 
 const clerkAppearance = {
