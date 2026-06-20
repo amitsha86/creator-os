@@ -32,7 +32,7 @@ export default async function CompetitorsPage() {
           </thead>
           <tbody>
             {[...competitors].sort((a, b) => b.growth - a.growth).map((c) => (
-              <tr key={c.id} className="border-b border-line/60 last:border-0 hover:bg-bg-hover">
+              <tr key={c.id} className="border-b border-line last:border-0 hover:bg-bg-hover">
                 <td className="px-4 py-3"><div className="flex items-center gap-2"><PlatformIcon platform={c.platform} size={15} /><span className="text-ink">{c.handle}</span></div></td>
                 <td className="px-4 py-3 text-ink-muted">{compact(c.subs)}</td>
                 <td className="px-4 py-3">{c.growth >= 10 ? <Badge tone="mint"><TrendingUp size={11} /> +{c.growth}%</Badge> : <span className="text-ink-muted">+{c.growth}%</span>}</td>
