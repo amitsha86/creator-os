@@ -2,9 +2,28 @@
 import { useState } from "react";
 import { scripts } from "@/lib/data";
 import { Card, ScoreBar, Badge, PageHeader } from "@/components/ui/primitives";
+import { EmptyState } from "@/components/ui/states";
 import { PenLine, Loader2, Wand2, AlertTriangle } from "lucide-react";
 
 export default function ScriptStudioPage() {
+  if (!scripts.length) {
+    return (
+      <div>
+        <PageHeader icon={<PenLine size={18} />} title="Script Studio" subtitle="Turn any idea into a retention-tuned, scored script." />
+        <EmptyState
+          icon={<PenLine size={22} />}
+          title="No scripts yet"
+          description="Pick an idea from your Content Brain or audit and Creora drafts a structured, scored script you can edit and ship."
+          actionLabel="Find an idea"
+          actionHref="/brain"
+        />
+      </div>
+    );
+  }
+  return <ScriptStudio />;
+}
+
+function ScriptStudio() {
   const doc = scripts[0];
   const [blocks, setBlocks] = useState(doc.blocks);
   const [scores, setScores] = useState(doc.scores);
