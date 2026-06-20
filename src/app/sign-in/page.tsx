@@ -9,7 +9,7 @@ export default function SignInPage() {
           <span className="text-lg font-semibold tracking-tight text-ink">CreatorOS</span>
         </div>
         <p className="text-sm text-ink-muted">The operating system for creators. Sign in to continue.</p>
-        <SignIn routing="hash" signUpUrl="/sign-up" />
+        <SignIn routing="hash" signUpUrl="/sign-up" forceRedirectUrl="/dashboard" />
       </div>
     </div>
   );
