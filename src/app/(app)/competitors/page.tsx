@@ -4,6 +4,7 @@ import { Card, Badge, PageHeader } from "@/components/ui/primitives";
 import { PlatformIcon } from "@/components/ui/platform";
 import { TrackChannelButton } from "@/components/track-channel-button";
 import { DeleteCompetitorButton } from "@/components/delete-competitor-button";
+import { EmptyState } from "@/components/ui/states";
 import { compact } from "@/lib/utils";
 import { Swords, TrendingUp, Lightbulb } from "lucide-react";
 
@@ -12,6 +13,22 @@ export const dynamic = "force-dynamic";
 export default async function CompetitorsPage() {
   const { userId } = await auth();
   const competitors = await getCompetitors(userId ?? undefined);
+
+  if (competitors.length === 0) {
+    return (
+      <div>
+        <PageHeader icon={<Swords size={18} />} title="Competitor Intelligence" subtitle="Track channels, decode why videos win, and find where rivals are exposed."
+          actions={<TrackChannelButton />} />
+        <EmptyState
+          icon={<Swords size={22} />}
+          title="No competitors tracked yet"
+          description="Add channels in your niche to see their growth, cadence, top videos, and where they're exposed — then beat them at their own game."
+          action={<TrackChannelButton />}
+        />
+      </div>
+    );
+  }
+
   return (
     <div>
       <PageHeader icon={<Swords size={18} />} title="Competitor Intelligence" subtitle="Track channels, decode why videos win, and find where rivals are exposed."
