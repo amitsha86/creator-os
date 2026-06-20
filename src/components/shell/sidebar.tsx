@@ -11,7 +11,7 @@ const groups: { label: string; items: { href: string; label: string; Icon: any }
   {
     label: "Intelligence",
     items: [
-      { href: "/", label: "Dashboard", Icon: LayoutDashboard },
+      { href: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
       { href: "/viral", label: "Viral Intelligence", Icon: Flame },
       { href: "/competitors", label: "Competitors", Icon: Swords },
       { href: "/research", label: "Research", Icon: BookOpen },
@@ -66,7 +66,7 @@ export function Sidebar() {
             <div className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-faint">{g.label}</div>
             <div className="space-y-0.5">
               {g.items.map(({ href, label, Icon }) => {
-                const active = href === "/" ? path === "/" : path.startsWith(href);
+                const active = path === href || path.startsWith(href + "/");
                 return (
                   <Link key={href} href={href} className={cn("nav-link", active && "nav-link-active")}>
                     <Icon size={16} className={active ? "text-brand-soft" : ""} />
