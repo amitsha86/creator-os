@@ -20,15 +20,31 @@ const config: Config = {
         mint: "#10b981",
         amber: "#f59e0b",
         rose: "#f43f5e",
+        // Creora premium creator palette (warm, light)
+        creora: {
+          bg: "#5B5656",
+          surface: "#F2F0EA",
+          soft: "#DDD0C9",
+          muted: "#CDBDB6",
+          text: "#3B1722",
+          subtext: "#7A6B6B",
+          blue: "#2463EB",
+          lime: "#B9FF1D",
+          purple: "#D8B4FE",
+          border: "rgba(59,23,34,0.12)",
+        },
       },
       fontFamily: {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
-      borderRadius: { xl: "0.85rem", "2xl": "1.1rem" },
+      borderRadius: { xl: "0.85rem", "2xl": "1.1rem", card: "28px", pill: "999px" },
       boxShadow: {
         card: "0 1px 0 0 rgba(255,255,255,0.03) inset, 0 8px 24px -12px rgba(0,0,0,0.6)",
         glow: "0 0 0 1px rgba(99,102,241,0.4), 0 8px 30px -8px rgba(99,102,241,0.35)",
+        creora: "0 18px 60px rgba(20,10,10,0.18)",
+        "creora-sm": "0 8px 28px rgba(20,10,10,0.10)",
       },
       keyframes: {
         "fade-in": { from: { opacity: "0", transform: "translateY(4px)" }, to: { opacity: "1", transform: "translateY(0)" } },
