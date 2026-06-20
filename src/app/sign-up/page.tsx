@@ -9,7 +9,7 @@ export default function SignUpPage() {
           <span className="text-lg font-semibold tracking-tight text-ink">CreatorOS</span>
         </div>
         <p className="text-sm text-ink-muted">Create your account and get your AI content team.</p>
-        <SignUp routing="hash" signInUrl="/sign-in" />
+        <SignUp routing="hash" signInUrl="/sign-in" forceRedirectUrl="/dashboard" />
       </div>
     </div>
   );
