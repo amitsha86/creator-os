@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { sampleAudit } from "@/data/mockCreoraData";
-import { Sparkles, ArrowRight, Check, X, Target, Calendar, FileText, Repeat, TrendingUp } from "lucide-react";
+import { ScoreExplainer } from "@/components/score-explainer";
+import { Sparkles, ArrowRight, Check, X, Target, Calendar, FileText, Repeat, TrendingUp, Film } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Sample Creator Growth Audit — Creora",
@@ -26,13 +27,48 @@ export default function SampleAuditPage() {
         <h1 className="creora-display mt-4 text-[clamp(32px,5vw,52px)] text-[#0F172A]">Sample Creator Growth Audit</h1>
         <p className="mt-3 max-w-2xl text-[#64748B]">See how Creora turns channel data, competitor patterns, and trends into clear content opportunities. This is a sample for an {a.creator.toLowerCase()} — not a real customer result.</p>
 
+        {/* NEXT BEST VIDEO — the hero of the page */}
+        <div className="creora-card mt-7 overflow-hidden">
+          <div className="flex items-center gap-2 border-b px-6 py-4 md:px-8" style={{ borderColor: "rgba(15,23,42,0.08)", background: "#0F172A" }}>
+            <Film size={18} className="text-[#BEF264]" />
+            <span className="font-semibold text-white">Next Best Video</span>
+            <span className="ml-auto inline-flex items-center gap-1"><Pill tone="lime">Viral {a.nextBestVideo.viralScore}</Pill><span className="text-white"><ScoreExplainer type="viral" /></span></span>
+          </div>
+          <div className="p-6 md:p-8">
+            <h2 className="creora-display text-[clamp(24px,4vw,40px)] leading-tight text-[#0F172A]">&ldquo;{a.nextBestVideo.title}&rdquo;</h2>
+            <div className="mt-6 grid gap-6 md:grid-cols-2">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">Why this can work</div>
+                <ul className="mt-2 space-y-2 text-[15px] text-[#0F172A]">
+                  {a.nextBestVideo.why.map((w) => <li key={w} className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-[#2463EB]" /> {w}</li>)}
+                </ul>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">Suggested hook</div>
+                  <div className="mt-1.5 rounded-[14px] p-3.5 text-[14px] leading-relaxed text-[#0F172A]" style={{ background: "#E7EDF6" }}>{a.nextBestVideo.hook}</div>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">Thumbnail direction</div>
+                  <div className="mt-1 text-[14px] text-[#0F172A]">{a.nextBestVideo.thumbnail}</div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 border-t pt-5" style={{ borderColor: "rgba(15,23,42,0.08)" }}>
+              <div className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">Repurpose plan</div>
+              <div className="mt-2 flex flex-wrap gap-2">{a.nextBestVideo.repurposePlan.map((r) => <Pill key={r} tone="purple"><Repeat size={12} /> {r}</Pill>)}</div>
+            </div>
+            <Link href="/audit" className="creora-btn creora-btn-blue mt-6">Get this for your channel <ArrowRight size={16} /></Link>
+          </div>
+        </div>
+
         {/* summary */}
         <div className="creora-card mt-7 flex flex-col items-center gap-6 p-8 md:flex-row md:p-10">
           <div className="grid h-36 w-36 shrink-0 place-items-center rounded-full" style={{ background: "#0F172A" }}>
             <div className="text-center"><div className="creora-display text-5xl text-[#BEF264]">{a.score}</div><div className="text-xs text-[#CBD5E1]">/ 100</div></div>
           </div>
           <div>
-            <div className="flex items-center gap-2"><TrendingUp size={18} className="text-[#2463EB]" /><span className="creora-display text-2xl text-[#0F172A]">Growth Score</span></div>
+            <div className="flex items-center gap-2"><TrendingUp size={18} className="text-[#2463EB]" /><span className="creora-display text-2xl text-[#0F172A]">Growth Score</span><ScoreExplainer type="growth" /></div>
             <div className="mt-2 text-[15px] text-[#0F172A]"><span className="font-semibold">Main opportunity:</span> {a.opportunity}</div>
             <p className="mt-2 text-[#64748B]">{a.summary}</p>
           </div>
@@ -56,8 +92,8 @@ export default function SampleAuditPage() {
           {a.opportunities.map((o) => (
             <div key={o.topic} className="creora-card p-5">
               <div className="font-semibold text-[#0F172A]">{o.topic}</div>
-              <div className="mt-3 flex items-center justify-between text-sm"><span className="text-[#64748B]">Trend</span><Pill tone="lime">{o.trend}</Pill></div>
-              <div className="mt-1.5 flex items-center justify-between text-sm"><span className="text-[#64748B]">Saturation</span><Pill tone="cream">{o.saturation}</Pill></div>
+              <div className="mt-3 flex items-center justify-between text-sm"><span className="flex items-center gap-1 text-[#64748B]">Trend <ScoreExplainer type="trend" /></span><Pill tone="lime">{o.trend}</Pill></div>
+              <div className="mt-1.5 flex items-center justify-between text-sm"><span className="flex items-center gap-1 text-[#64748B]">Saturation <ScoreExplainer type="saturation" /></span><Pill tone="cream">{o.saturation}</Pill></div>
               <div className="mt-3 text-[13px] text-[#64748B]">{o.format}</div>
             </div>
           ))}
@@ -70,7 +106,7 @@ export default function SampleAuditPage() {
             <div key={i} className="creora-card p-5">
               <div className="flex items-start justify-between gap-3">
                 <span className="text-sm font-semibold leading-snug text-[#0F172A]">{idea.title}</span>
-                <span className="creora-pill creora-pill-lime shrink-0">Viral {idea.viralScore}</span>
+                <span className="flex shrink-0 items-center gap-1"><span className="creora-pill creora-pill-lime">Viral {idea.viralScore}</span><ScoreExplainer type="viral" /></span>
               </div>
               <p className="mt-2 text-[13px] text-[#64748B]">{idea.why}</p>
               <div className="mt-3 rounded-[14px] p-2.5 text-[13px] text-[#0F172A]" style={{ background: "#E7EDF6" }}><span className="font-semibold">Hook:</span> {idea.hook}</div>
@@ -93,7 +129,7 @@ export default function SampleAuditPage() {
         </div>
 
         {/* script preview */}
-        <h2 className="creora-display mt-10 text-[clamp(22px,4vw,34px)] text-[#0F172A]"><FileText size={24} className="mb-1 mr-1 inline text-[#2463EB]" /> Script preview</h2>
+        <h2 id="script-preview" className="creora-display mt-10 scroll-mt-6 text-[clamp(22px,4vw,34px)] text-[#0F172A]"><FileText size={24} className="mb-1 mr-1 inline text-[#2463EB]" /> Script preview</h2>
         <div className="creora-card mt-5 p-6 md:p-8">
           <div className="font-semibold text-[#0F172A]">{a.scriptPreview.title}</div>
           <div className="mt-3 rounded-[16px] p-4 text-[15px] text-[#0F172A]" style={{ background: "#E7EDF6" }}><span className="font-semibold">Opening hook:</span> {a.scriptPreview.hook}</div>
