@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import { Sparkles, X, CornerDownLeft, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,9 +14,10 @@ const SUGGESTIONS = [
 ];
 
 export function AIPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [msgs, setMsgs] = useState<Msg[]>([
-    { role: "ai", text: "Hi Maya 👋 I'm your Creora assistant. Ask me what to make next, why a metric moved, or to draft anything. I see your channel data." },
-  ]);
+  const { user } = useUser();
+  const firstName = user?.firstName?.trim() || "there";
+  const greeting = `Hi ${firstName} 👋 I'm your Creora assistant. Ask me what to make next, how to sharpen a hook, or to draft a script, title, or post.`;
+  const [msgs, setMsgs] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -45,6 +47,9 @@ export function AIPanel({ open, onClose }: { open: boolean; onClose: () => void 
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto scroll-thin p-4">
+        <div className="mr-2 rounded-xl border border-line bg-bg-panel px-3.5 py-2.5 text-sm text-ink">
+          <p className="whitespace-pre-wrap leading-relaxed">{greeting}</p>
+        </div>
         {msgs.map((m, i) => (
           <div key={i} className={cn("rounded-xl px-3.5 py-2.5 text-sm", m.role === "user" ? "ml-6 bg-brand text-white" : "mr-2 border border-line bg-bg-panel text-ink")}>
             <p className="whitespace-pre-wrap leading-relaxed">{m.text}</p>
@@ -52,7 +57,7 @@ export function AIPanel({ open, onClose }: { open: boolean; onClose: () => void 
           </div>
         ))}
         {loading && <div className="mr-2 flex items-center gap-2 rounded-xl border border-line bg-bg-panel px-3.5 py-2.5 text-sm text-ink-muted"><Loader2 size={14} className="animate-spin" /> Thinking…</div>}
-        {msgs.length <= 1 && (
+        {msgs.length === 0 && (
           <div className="space-y-1.5 pt-2">
             {SUGGESTIONS.map((s) => (
               <button key={s} onClick={() => send(s)} className="block w-full rounded-lg border border-line bg-bg-panel px-3 py-2 text-left text-sm text-ink-muted transition-colors hover:border-brand/40 hover:text-ink">{s}</button>

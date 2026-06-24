@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, Flame, Swords, BookOpen, Brain, PenLine, Image as ImageIcon,
@@ -52,6 +53,15 @@ const groups: { label: string; items: { href: string; label: string; Icon: any }
 
 export function Sidebar() {
   const path = usePathname();
+  const { user } = useUser();
+  const displayName = user?.fullName || user?.firstName || "Your account";
+  const handle = user?.username
+    ? `@${user.username}`
+    : user?.primaryEmailAddress?.emailAddress ?? "";
+  const initials =
+    (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
+    user?.fullName?.slice(0, 2).toUpperCase() ||
+    "·";
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col border-r border-line bg-bg-soft">
       <div className="flex h-14 items-center gap-2 px-4">
@@ -81,10 +91,10 @@ export function Sidebar() {
 
       <div className="border-t border-line p-3">
         <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
-          <div className="grid h-7 w-7 place-items-center rounded-full bg-brand text-xs font-bold text-white">MB</div>
+          <div className="grid h-7 w-7 place-items-center rounded-full bg-brand text-xs font-bold uppercase text-white">{initials}</div>
           <div className="min-w-0">
-            <div className="truncate text-sm text-ink">Maya Builds</div>
-            <div className="truncate text-xs text-ink-faint">@mayabuilds · Pro</div>
+            <div className="truncate text-sm text-ink">{displayName}</div>
+            <div className="truncate text-xs text-ink-faint">{handle ? `${handle} · Pro` : "Pro"}</div>
           </div>
         </div>
       </div>
