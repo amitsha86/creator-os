@@ -31,11 +31,11 @@ export default function AuditPage() {
   const [goal, setGoal] = useState("Grow subscribers");
   const [competitors, setCompetitors] = useState("");
   const [result, setResult] = useState<AuditResult | null>(null);
-  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   async function run(e: React.FormEvent) {
     e.preventDefault();
-    setError(false);
+    setErrorMsg(null);
     setStage("loading");
     try {
       const res = await fetch("/api/audit", {
@@ -43,11 +43,17 @@ export default function AuditPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ url, niche, goal, competitors }),
       });
+      if (res.status === 429) {
+        const data = await res.json().catch(() => ({}));
+        const mins = Math.max(1, Math.ceil((data?.retryAfter ?? 600) / 60));
+        setErrorMsg(`You've run a few audits already. Try again in about ${mins} minute${mins === 1 ? "" : "s"}.`);
+        return;
+      }
       if (!res.ok) throw new Error("audit failed");
       const data: AuditResult = await res.json();
       setResult(data);
     } catch {
-      setError(true);
+      setErrorMsg("We couldn't reach the audit engine. Give it another try.");
     } finally {
       setStage("result");
     }
@@ -124,9 +130,9 @@ export default function AuditPage() {
       {stage === "result" && result && <AuditReport a={result} />}
       {stage === "result" && !result && (
         <section className="mx-auto grid max-w-md place-items-center px-5 py-32 text-center">
-          <div className="creora-display text-2xl text-[#0F172A]">That didn&apos;t go through.</div>
-          <p className="mt-2 text-sm text-[#64748B]">We couldn&apos;t reach the audit engine. Give it another try.</p>
-          <button onClick={() => setStage("form")} className="creora-btn creora-btn-blue mt-5">Try again</button>
+          <div className="creora-display text-2xl text-[#0F172A]">Hold on a moment.</div>
+          <p className="mt-2 text-sm text-[#64748B]">{errorMsg ?? "We couldn't reach the audit engine. Give it another try."}</p>
+          <button onClick={() => setStage("form")} className="creora-btn creora-btn-blue mt-5">Back to form</button>
         </section>
       )}
     </div>
