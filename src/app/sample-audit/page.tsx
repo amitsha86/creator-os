@@ -19,7 +19,7 @@ export default function SampleAuditPage() {
     <div className="creora-root min-h-screen">
       <header className="mx-auto flex max-w-5xl items-center px-5 py-4">
         <Link href="/" className="creora-display text-xl text-[#0F172A]">Creora</Link>
-        <Link href="/audit" className="creora-btn creora-btn-blue ml-auto !py-2.5 !px-4 text-sm">Get Free Audit</Link>
+        <Link href="/audit" className="creora-btn creora-btn-blue ml-auto !py-2.5 !px-4 text-sm">Get Free Channel Audit</Link>
       </header>
 
       <section className="mx-auto max-w-5xl px-5 py-8">
