@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { AuditResult } from "@/lib/audit";
 import { trackEvent } from "@/lib/analytics";
-import { Sparkles, ArrowRight, Check, X, TrendingUp, Loader2, Target, Calendar, Lock, Lightbulb, Repeat, PenLine, Film } from "lucide-react";
+import { ScoreExplainer } from "@/components/score-explainer";
+import { Sparkles, ArrowRight, Check, X, TrendingUp, Loader2, Target, Calendar, Lock, Lightbulb, Repeat, PenLine, Film, ShieldCheck } from "lucide-react";
 
 type Stage = "form" | "loading" | "result";
 
@@ -90,19 +91,23 @@ export default function AuditPage() {
               </Field>
               <Field label="Primary goal">
                 <select value={goal} onChange={(e) => setGoal(e.target.value)} className="creora-input">
-                  <option>Grow subscribers</option>
-                  <option>More views</option>
-                  <option>Monetize / sponsors</option>
+                  <option>Grow views</option>
+                  <option>Get more subscribers</option>
+                  <option>Improve consistency</option>
+                  <option>Repurpose content</option>
+                  <option>Increase brand deals</option>
                   <option>Build authority</option>
                 </select>
               </Field>
             </div>
             <Field label="Competitors (optional)">
-              <input value={competitors} onChange={(e) => setCompetitors(e.target.value)} placeholder="@competitor1, @competitor2" className="creora-input" />
+              <input value={competitors} onChange={(e) => setCompetitors(e.target.value)} placeholder="Paste competitor channel URLs, one per line" className="creora-input" />
             </Field>
-            <button type="submit" className="creora-btn creora-btn-blue w-full">Generate My Free Audit <ArrowRight size={16} /></button>
-            <p className="text-center text-xs text-[#64748B]">No card required · We never post without your permission.</p>
+            <button type="submit" className="creora-btn creora-btn-blue w-full">Generate Free Audit <ArrowRight size={16} /></button>
+            <p className="text-center text-xs text-[#64748B]">No credit card needed. You can start with a public channel URL.</p>
           </form>
+
+          <TrustCard />
 
           {/* What you'll get */}
           <div className="mt-12 text-left">
@@ -159,6 +164,25 @@ function Label({ children }: { children: React.ReactNode }) {
   return <div className="text-[11px] font-semibold uppercase tracking-wide text-[#64748B]">{children}</div>;
 }
 
+function TrustCard() {
+  return (
+    <div className="creora-card mt-6 p-6 text-left">
+      <div className="flex items-center gap-2 font-semibold text-[#0F172A]"><ShieldCheck size={18} className="text-[#2463EB]" /> Your channel is safe.</div>
+      <p className="mt-2 text-[14px] leading-relaxed text-[#64748B]">Creora can start with a public channel URL. If you connect an account later, you stay in control of permissions and can disconnect anytime.</p>
+      <div className="mt-3 grid gap-x-6 gap-y-2 text-[14px] text-[#0F172A] sm:grid-cols-2">
+        {["We never post without your permission", "Your channel data stays private", "You can disconnect accounts anytime", "Scores are estimates, not guarantees", "You can request data deletion"].map((t) => (
+          <div key={t} className="flex gap-2"><Check size={15} className="mt-0.5 shrink-0 text-[#2463EB]" /> {t}</div>
+        ))}
+      </div>
+      <div className="mt-4 flex gap-4 text-sm font-medium text-[#2463EB]">
+        <Link href="/privacy" className="hover:underline">Privacy</Link>
+        <Link href="/security" className="hover:underline">Security</Link>
+        <Link href="/data-deletion" className="hover:underline">Data deletion</Link>
+      </div>
+    </div>
+  );
+}
+
 function AuditReport({ a }: { a: AuditResult }) {
   const previewIdeas = a.ideas.slice(0, 3);
   const lockedCount = Math.max(0, a.ideas.length - previewIdeas.length);
@@ -181,7 +205,7 @@ function AuditReport({ a }: { a: AuditResult }) {
 
       {/* THE OPPORTUNITY — the magical headline */}
       <div className="creora-card mt-4 p-7 md:p-9">
-        <div className="inline-flex"><Pill tone="lime"><Target size={13} /> Your channel opportunity</Pill></div>
+        <div className="inline-flex items-center gap-1"><Pill tone="lime"><Target size={13} /> Your channel opportunity</Pill><ScoreExplainer type="opportunity" /></div>
         <h1 className="creora-display mt-3 text-[clamp(24px,4vw,38px)] leading-tight text-[#0F172A]">{a.opportunity}</h1>
 
         <div className="mt-6 grid gap-6 md:grid-cols-2">
@@ -223,7 +247,7 @@ function AuditReport({ a }: { a: AuditResult }) {
           </div>
         </div>
         <div>
-          <div className="flex items-center gap-2"><TrendingUp size={18} className="text-[#2463EB]" /><span className="creora-display text-2xl text-[#0F172A]">Your channel is {a.trend}.</span></div>
+          <div className="flex items-center gap-2"><TrendingUp size={18} className="text-[#2463EB]" /><span className="creora-display text-2xl text-[#0F172A]">Your channel is {a.trend}.</span><ScoreExplainer type="growth" /></div>
           <p className="mt-2 text-[#64748B]">Here&apos;s what&apos;s working, what&apos;s holding you back, and your first few ideas. Unlock the full audit free to see all {a.ideas.length}.</p>
         </div>
       </div>
@@ -264,7 +288,7 @@ function AuditReport({ a }: { a: AuditResult }) {
           <div key={i} className="creora-card p-5">
             <div className="flex items-start justify-between gap-3">
               <span className="text-sm font-semibold leading-snug text-[#0F172A]">{idea.title}</span>
-              <span className="creora-pill creora-pill-lime shrink-0">Viral {idea.viralScore}</span>
+              <span className="flex shrink-0 items-center gap-1"><span className="creora-pill creora-pill-lime">Viral {idea.viralScore}</span><ScoreExplainer type="viral" /></span>
             </div>
             <p className="mt-2 text-[13px] text-[#64748B]">{idea.why}</p>
             <div className="mt-3 rounded-[14px] p-2.5 text-[13px] text-[#0F172A]" style={{ background: "#E7EDF6" }}><span className="font-semibold">Hook:</span> {idea.hook}</div>
