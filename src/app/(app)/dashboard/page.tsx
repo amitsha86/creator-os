@@ -6,7 +6,7 @@ import { Card, Badge } from "@/components/ui/primitives";
 import { PlatformIcon } from "@/components/ui/platform";
 import { nextBestIdea, viralOpportunities, growth, weeklyMetrics } from "@/data/mockCreoraData";
 import { compact } from "@/lib/utils";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Swords, Flame, Youtube, Repeat } from "lucide-react";
@@ -29,6 +29,9 @@ export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
+  const user = await currentUser();
+  const firstName = user?.firstName?.trim() || "there";
+
   const [content, recommendations, competitors, settings] = await Promise.all([
     getContent(userId),
     getRecommendations(),
@@ -49,7 +52,7 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-ink">Hello Maya — here&apos;s what to create next.</h1>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-ink">Hello {firstName} — here&apos;s what to create next.</h1>
           <p className="mt-1.5 text-sm text-ink-muted">Your Creora command center for {channel.niche}.</p>
         </div>
         <Badge tone="brand"><Sparkles size={12} /> Growth Score {channel.growthScore}</Badge>
@@ -171,7 +174,7 @@ export default async function DashboardPage() {
 
         {/* YouTube live (real) */}
         <Card className="p-6 lg:col-span-3">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div id="connect" className="flex scroll-mt-20 flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-2 text-sm font-semibold text-ink">
               <Youtube size={16} className="text-rose" /> YouTube {yt && <Badge tone="mint">live</Badge>}
             </div>
