@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { AuditResult } from "@/lib/audit";
+import { trackEvent } from "@/lib/analytics";
 import { Sparkles, ArrowRight, Check, X, TrendingUp, Loader2, Target, Calendar, Lock, Lightbulb, Repeat, PenLine, Film } from "lucide-react";
 
 type Stage = "form" | "loading" | "result";
@@ -33,10 +34,15 @@ export default function AuditPage() {
   const [result, setResult] = useState<AuditResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  useEffect(() => {
+    trackEvent("audit_page_viewed", { route: "/audit" });
+  }, []);
+
   async function run(e: React.FormEvent) {
     e.preventDefault();
     setErrorMsg(null);
     setStage("loading");
+    trackEvent("audit_form_submitted", { niche: niche || undefined, goal, hasCompetitors: Boolean(competitors.trim()) });
     try {
       const res = await fetch("/api/audit", {
         method: "POST",
@@ -52,6 +58,7 @@ export default function AuditPage() {
       if (!res.ok) throw new Error("audit failed");
       const data: AuditResult = await res.json();
       setResult(data);
+      trackEvent("audit_partial_result_viewed", { live: data.live, grounded: data.grounded });
     } catch {
       setErrorMsg("We couldn't reach the audit engine. Give it another try.");
     } finally {
@@ -276,7 +283,7 @@ function AuditReport({ a }: { a: AuditResult }) {
         <p className="mx-auto mt-3 max-w-md text-white/85">Get all {a.ideas.length} ideas, your 30-day content plan, script previews, and repurpose packs.</p>
 
         <div className="mx-auto mt-5 flex max-w-md flex-col gap-2">
-          <Link href="/sign-up" className="creora-btn bg-[#BEF264] text-[#1A2E05] hover:bg-[#a3e635]">Unlock Full Audit Free <ArrowRight size={16} /></Link>
+          <Link href="/sign-up" onClick={() => trackEvent("audit_unlock_clicked")} className="creora-btn bg-[#BEF264] text-[#1A2E05] hover:bg-[#a3e635]">Unlock Full Audit <ArrowRight size={16} /></Link>
           {!sent ? (
             <form onSubmit={(e) => { e.preventDefault(); if (email) setSent(true); }} className="mt-2 flex flex-col gap-2 sm:flex-row">
               <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Or email me the full audit" className="creora-input flex-1 !bg-white/95" />
