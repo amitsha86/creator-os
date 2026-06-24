@@ -106,7 +106,7 @@ Respond with ONLY valid JSON (no markdown, no code fences, no commentary) matchi
     { "title": "<clickable title>", "viralScore": <int 70-95>, "why": "<one line>", "hook": "<one line>", "format": "<e.g. 'Long-form + 5 Shorts'>", "repurpose": "<e.g. 'Shorts, X thread, newsletter'>" }
   ]
 }
-Return exactly 6 ideas, sorted by viralScore descending. Be concrete and specific to THIS creator — never generic. Output JSON only.`;
+Return exactly 5 ideas, sorted by viralScore descending. Keep every field tight — one line each. Be concrete and specific to THIS creator — never generic. Output JSON only.`;
 }
 
 function coerce(raw: any, channel: AuditChannel | null, grounded: boolean, live: boolean): AuditResult | null {
@@ -184,7 +184,13 @@ export async function runAudit(input: AuditInput): Promise<AuditResult> {
 
   const prompt = buildPrompt(input, channel, videos);
   const system = `You are Creora's lead growth strategist for a creator in the "${input.niche?.trim() || "content"}" niche. You are specific, evidence-driven, and never generic. You output exactly what is asked — here, strict JSON only.`;
-  const { text, live } = await generate(prompt, { maxTokens: 2000, system });
+  // Haiku + a trimmed budget keeps the call well under the serverless time limit.
+  const { text, live } = await generate(prompt, {
+    maxTokens: 1500,
+    system,
+    model: process.env.ANTHROPIC_AUDIT_MODEL || "claude-haiku-4-5-20251001",
+    timeoutMs: 20000,
+  });
 
   const parsed = coerce(extractJson(text), channel, grounded, live);
   return parsed ?? fallbackAudit(input, channel, grounded);

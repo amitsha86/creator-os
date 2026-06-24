@@ -14,12 +14,18 @@ Be specific, concrete, and useful. Prefer punchy, high-retention language. Never
  * Calls Anthropic if a key is present; otherwise returns a high-quality
  * deterministic fallback so the product is fully usable with zero setup.
  */
-export async function generate(prompt: string, opts: { maxTokens?: number; system?: string } = {}) {
+export async function generate(prompt: string, opts: { maxTokens?: number; system?: string; model?: string; timeoutMs?: number } = {}) {
   if (!aiEnabled()) return { text: fallback(prompt), live: false };
   try {
-    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    // No retries + an explicit timeout below the serverless function limit, so a
+    // slow call degrades to the deterministic fallback instead of a 504.
+    const client = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+      maxRetries: 0,
+      timeout: opts.timeoutMs ?? 22000,
+    });
     const msg = await client.messages.create({
-      model: MODEL,
+      model: opts.model ?? MODEL,
       max_tokens: opts.maxTokens ?? 1024,
       system: opts.system ?? SYSTEM,
       messages: [{ role: "user", content: prompt }],
