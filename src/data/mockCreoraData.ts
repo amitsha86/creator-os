@@ -104,7 +104,7 @@ export const features = [
   { name: "AI Content Brain", desc: "Generate ideas, hooks, titles, outlines, and scripts." },
   { name: "Competitor Radar", desc: "Track what's working in your niche." },
   { name: "Script Studio", desc: "Turn ideas into structured, retention-friendly scripts." },
-  { name: "Repurpose Engine", desc: "Turn one video into Shorts, posts, blogs, and newsletters." },
+  { name: "Repurpose Engine", desc: "Turn one video into 20+ platform-ready assets." },
   { name: "AI Growth Coach", desc: "Weekly recommendations based on your performance." },
 ];
 
