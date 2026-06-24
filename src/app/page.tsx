@@ -242,6 +242,7 @@ export default function CreoraHome() {
                 {p.per && <span className="mb-1 text-sm text-[#64748B]">{p.per}</span>}
               </div>
               <div className="mt-1 text-sm text-[#64748B]">{p.tagline}</div>
+              <div className="mt-2 flex items-start gap-1.5 text-[12px] text-[#0F172A]"><Zap size={13} className="mt-0.5 shrink-0 text-[#2463EB]" /><span><span className="font-semibold">Why upgrade:</span> {p.whyUpgrade}</span></div>
               <div className="mt-3 rounded-[12px] px-3 py-2 text-[12px] font-semibold text-[#0F172A]" style={{ background: "#E7EDF6" }}>{p.limit}</div>
               <ul className="mt-4 flex-1 space-y-2 text-sm text-[#0F172A]">
                 {p.features.map((f) => <li key={f} className="flex gap-2"><Check size={15} className="mt-0.5 shrink-0 text-[#2463EB]" /> {f}</li>)}
