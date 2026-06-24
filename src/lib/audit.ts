@@ -1,6 +1,10 @@
 import { generate } from "@/lib/ai";
 import { fetchChannelStats, fetchRecentVideos, type YouTubeVideo } from "@/lib/youtube";
 
+// Cap how many recent uploads we fetch + feed the model. Fewer = shorter prompt
+// and a faster generation, which matters under the serverless time limit.
+const RECENT_VIDEO_LIMIT = 6;
+
 export interface AuditIdea {
   title: string;
   viralScore: number;
@@ -106,7 +110,7 @@ Respond with ONLY valid JSON (no markdown, no code fences, no commentary) matchi
     { "title": "<clickable title>", "viralScore": <int 70-95>, "why": "<one line>", "hook": "<one line>", "format": "<e.g. 'Long-form + 5 Shorts'>", "repurpose": "<e.g. 'Shorts, X thread, newsletter'>" }
   ]
 }
-Return exactly 5 ideas, sorted by viralScore descending. Keep every field tight — one line each. Be concrete and specific to THIS creator — never generic. Output JSON only.`;
+Return exactly 4 ideas, sorted by viralScore descending. Keep every field tight — one line each, no filler. Be concrete and specific to THIS creator — never generic. Output JSON only.`;
 }
 
 function coerce(raw: any, channel: AuditChannel | null, grounded: boolean, live: boolean): AuditResult | null {
@@ -177,19 +181,20 @@ export async function runAudit(input: AuditInput): Promise<AuditResult> {
         videos: stats.videos,
         handle: stats.handle,
       };
-      if (stats.id) videos = await fetchRecentVideos(stats.id);
+      if (stats.id) videos = await fetchRecentVideos(stats.id, RECENT_VIDEO_LIMIT);
     }
   }
   const grounded = videos.length > 0;
 
   const prompt = buildPrompt(input, channel, videos);
   const system = `You are Creora's lead growth strategist for a creator in the "${input.niche?.trim() || "content"}" niche. You are specific, evidence-driven, and never generic. You output exactly what is asked — here, strict JSON only.`;
-  // Haiku + a trimmed budget keeps the call well under the serverless time limit.
+  // Haiku + a trimmed budget keeps the call under the serverless time limit; the
+  // 26s timeout leaves headroom below the route's 30s cap so a live result lands.
   const { text, live } = await generate(prompt, {
-    maxTokens: 1500,
+    maxTokens: 1100,
     system,
     model: process.env.ANTHROPIC_AUDIT_MODEL || "claude-haiku-4-5-20251001",
-    timeoutMs: 20000,
+    timeoutMs: 26000,
   });
 
   const parsed = coerce(extractJson(text), channel, grounded, live);
