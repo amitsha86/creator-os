@@ -53,32 +53,45 @@ export default async function DashboardPage() {
       <div className="flex items-end justify-between">
         <div>
           <h1 className="font-display text-3xl font-semibold tracking-tight text-ink">Hello {firstName} — here&apos;s what to create next.</h1>
-          <p className="mt-1.5 text-sm text-ink-muted">Your Creora command center for {channel.niche}.</p>
+          <p className="mt-1.5 text-sm text-ink-muted">{youtubeHandle ? `Your Creora command center for ${channel.niche}.` : "Connect your channel to see your real growth score and next ideas."}</p>
         </div>
-        <Badge tone="brand"><Sparkles size={12} /> Growth Score {channel.growthScore}</Badge>
+        {youtubeHandle && <Badge tone="brand"><Sparkles size={12} /> Growth Score {channel.growthScore}</Badge>}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        {/* Growth Score */}
-        <div className="rounded-[20px] p-6 shadow-card" style={{ background: "#0F172A" }}>
-          <div className="text-sm text-[#CBD5E1]">Creator Growth Score</div>
-          <div className="font-display mt-2 text-5xl font-semibold text-[#BEF264]">{channel.growthScore}<span className="text-xl text-[#CBD5E1]">/100</span></div>
-          <div className="mt-2 text-sm text-[#E7EDF6]">{growth.trend}</div>
-          <div className="mt-1 text-sm text-[#E7EDF6]">Main opportunity: <span className="text-[#FFFFFF]">{growth.opportunity}</span></div>
-          <Link href="/coach" className="btn mt-4 w-full bg-[#BEF264] text-[#1A2E05] hover:bg-[#a3e635]">Open Growth Coach <ArrowRight size={15} /></Link>
-        </div>
+        {youtubeHandle ? (
+          <>
+            {/* Growth Score */}
+            <div className="rounded-[20px] p-6 shadow-card" style={{ background: "#0F172A" }}>
+              <div className="text-sm text-[#CBD5E1]">Creator Growth Score</div>
+              <div className="font-display mt-2 text-5xl font-semibold text-[#BEF264]">{channel.growthScore}<span className="text-xl text-[#CBD5E1]">/100</span></div>
+              <div className="mt-2 text-sm text-[#E7EDF6]">{growth.trend}</div>
+              <div className="mt-1 text-sm text-[#E7EDF6]">Main opportunity: <span className="text-[#FFFFFF]">{growth.opportunity}</span></div>
+              <Link href="/coach" className="btn mt-4 w-full bg-[#BEF264] text-[#1A2E05] hover:bg-[#a3e635]">Open Growth Coach <ArrowRight size={15} /></Link>
+            </div>
 
-        {/* Next Best Idea */}
-        <Card className="p-6 lg:col-span-2">
-          <div className="flex items-center gap-2 text-sm font-semibold text-ink"><Sparkles size={16} className="text-brand" /> Next Best Idea</div>
-          <div className="font-display mt-2 text-2xl font-semibold text-ink">&ldquo;{nextBestIdea.title}&rdquo;</div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Badge tone="brand">Viral {nextBestIdea.viralScore}</Badge>
-            <Badge>{nextBestIdea.format}</Badge>
-          </div>
-          <p className="mt-3 text-sm text-ink-muted">{nextBestIdea.why}</p>
-          <Link href="/scripts" className="btn-primary mt-4">Generate Script <ArrowRight size={15} /></Link>
-        </Card>
+            {/* Next Best Idea */}
+            <Card className="p-6 lg:col-span-2">
+              <div className="flex items-center gap-2 text-sm font-semibold text-ink"><Sparkles size={16} className="text-brand" /> Next Best Idea</div>
+              <div className="font-display mt-2 text-2xl font-semibold text-ink">&ldquo;{nextBestIdea.title}&rdquo;</div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Badge tone="brand">Viral {nextBestIdea.viralScore}</Badge>
+                <Badge>{nextBestIdea.format}</Badge>
+              </div>
+              <p className="mt-3 text-sm text-ink-muted">{nextBestIdea.why}</p>
+              <Link href="/scripts" className="btn-primary mt-4">Generate Script <ArrowRight size={15} /></Link>
+            </Card>
+          </>
+        ) : (
+          /* Onboarding — no channel connected yet */
+          <Card className="p-6 lg:col-span-3">
+            <div className="flex items-center gap-2 text-sm font-semibold text-ink"><Youtube size={16} className="text-rose" /> Connect your channel</div>
+            <h2 className="font-display mt-2 text-2xl font-semibold text-ink">See your real Growth Score and next best idea.</h2>
+            <p className="mt-2 max-w-2xl text-sm text-ink-muted">Add your YouTube channel and Creora pulls your real stats, then scores your growth and writes your next video. The cards below show sample data until you connect.</p>
+            <div className="mt-4"><ConnectChannel current={youtubeHandle} /></div>
+            <div className="mt-3"><Link href="/audit" className="text-sm font-medium text-brand hover:underline">Or run a full free audit →</Link></div>
+          </Card>
+        )}
 
         {/* Viral Opportunities */}
         <Card className="p-6 lg:col-span-2">
