@@ -1,5 +1,5 @@
 // ============================================================
-// CreatorOS — in-memory data layer (seed + store)
+// Creora — in-memory data layer (seed + store)
 // Production target is PostgreSQL + ClickHouse + Pinecone (see PRD);
 // this module provides a typed, seeded store so the app runs with zero setup.
 // ============================================================
