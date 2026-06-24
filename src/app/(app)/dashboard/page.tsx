@@ -1,6 +1,7 @@
 import { channel } from "@/lib/data";
 import { getContent, getRecommendations, getCompetitors, getSettings } from "@/lib/store";
-import { fetchChannelStats, youtubeEnabled } from "@/lib/youtube";
+import { fetchChannelStats, fetchRecentVideos, youtubeEnabled } from "@/lib/youtube";
+import { computeGrowth } from "@/lib/growth";
 import { ConnectChannel } from "@/components/connect-channel";
 import { Card, Badge } from "@/components/ui/primitives";
 import { PlatformIcon } from "@/components/ui/platform";
@@ -41,6 +42,9 @@ export default async function DashboardPage() {
   const { youtubeHandle } = settings;
   const ytEnabled = youtubeEnabled();
   const yt = youtubeHandle ? await fetchChannelStats(youtubeHandle) : null;
+  const ytVideos = yt?.id ? await fetchRecentVideos(yt.id) : [];
+  // Real, deterministic Growth Score from the connected channel's actual stats.
+  const realGrowth = yt ? computeGrowth(yt, ytVideos) : null;
 
   const rivals = competitors.filter((c) => !c.owned);
   const outperforming = rivals.filter((c) => c.growth >= 5).length || rivals.length;
@@ -53,15 +57,42 @@ export default async function DashboardPage() {
       <div className="flex items-end justify-between">
         <div>
           <h1 className="font-display text-3xl font-semibold tracking-tight text-ink">Hello {firstName} — here&apos;s what to create next.</h1>
-          <p className="mt-1.5 text-sm text-ink-muted">{youtubeHandle ? `Your Creora command center for ${channel.niche}.` : "Connect your channel to see your real growth score and next ideas."}</p>
+          <p className="mt-1.5 text-sm text-ink-muted">{realGrowth ? `Your Creora command center · ${yt!.title}` : youtubeHandle ? `Your Creora command center for ${channel.niche}.` : "Connect your channel to see your real growth score and next ideas."}</p>
         </div>
-        {youtubeHandle && <Badge tone="brand"><Sparkles size={12} /> Growth Score {channel.growthScore}</Badge>}
+        {realGrowth && <Badge tone="brand"><Sparkles size={12} /> Growth Score {realGrowth.score}</Badge>}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        {youtubeHandle ? (
+        {realGrowth ? (
           <>
-            {/* Growth Score */}
+            {/* REAL Growth Score — computed from the connected channel's public stats */}
+            <div className="rounded-[20px] p-6 shadow-card" style={{ background: "#0F172A" }}>
+              <div className="flex items-center justify-between text-sm text-[#CBD5E1]"><span>Creator Growth Score</span><span className="text-[#94A3B8]">{yt!.handle}</span></div>
+              <div className="font-display mt-2 text-5xl font-semibold text-[#BEF264]">{realGrowth.score}<span className="text-xl text-[#CBD5E1]">/100</span></div>
+              <div className="mt-2 text-sm capitalize text-[#E7EDF6]">{realGrowth.trend}</div>
+              <div className="mt-1 text-xs text-[#CBD5E1]">{yt!.subscribers != null ? compact(yt!.subscribers) : "hidden"} subscribers · {compact(realGrowth.avgViews)} avg views</div>
+              <div className="mt-2 text-sm text-[#E7EDF6]">Main opportunity: <span className="text-[#FFFFFF]">{realGrowth.mainOpportunity}</span></div>
+              <Link href="/coach" className="btn mt-4 w-full bg-[#BEF264] text-[#1A2E05] hover:bg-[#a3e635]">Open Growth Coach <ArrowRight size={15} /></Link>
+            </div>
+
+            {/* REAL standout video */}
+            <Card className="p-6 lg:col-span-2">
+              <div className="flex items-center gap-2 text-sm font-semibold text-ink"><Sparkles size={16} className="text-brand" /> Your standout this period</div>
+              {realGrowth.topVideo ? (
+                <>
+                  <div className="font-display mt-2 text-2xl font-semibold text-ink">&ldquo;{realGrowth.topVideo.title}&rdquo;</div>
+                  <div className="mt-3 flex flex-wrap gap-2"><Badge tone="brand">{compact(realGrowth.topVideo.views)} views</Badge>{realGrowth.momentumMultiple >= 1 && <Badge>{realGrowth.momentumMultiple.toFixed(1)}x avg</Badge>}</div>
+                </>
+              ) : (
+                <div className="font-display mt-2 text-2xl font-semibold text-ink">Let&apos;s find your next winner.</div>
+              )}
+              <p className="mt-3 text-sm text-ink-muted">{realGrowth.mainOpportunity}</p>
+              <Link href="/audit" className="btn-primary mt-4">Get your next best idea <ArrowRight size={15} /></Link>
+            </Card>
+          </>
+        ) : youtubeHandle ? (
+          <>
+            {/* Growth Score (sample — channel saved but live stats unavailable) */}
             <div className="rounded-[20px] p-6 shadow-card" style={{ background: "#0F172A" }}>
               <div className="text-sm text-[#CBD5E1]">Creator Growth Score</div>
               <div className="font-display mt-2 text-5xl font-semibold text-[#BEF264]">{channel.growthScore}<span className="text-xl text-[#CBD5E1]">/100</span></div>
