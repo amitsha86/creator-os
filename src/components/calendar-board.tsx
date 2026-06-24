@@ -1,16 +1,31 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CalendarPost } from "@/lib/data";
 import { PlatformIcon, platformColor } from "@/components/ui/platform";
 import { Clock, Loader2 } from "lucide-react";
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+function computeWeek(today: Date) {
+  const dow = (today.getDay() + 6) % 7; // Mon = 0 … Sun = 6
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - dow);
+  const dates = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return d.getDate();
+  });
+  return { todayIdx: dow, dates };
+}
+
 export function CalendarBoard({ initial }: { initial: CalendarPost[] }) {
   const [posts, setPosts] = useState<CalendarPost[]>(initial);
   const [dragId, setDragId] = useState<string | null>(null);
   const [over, setOver] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  // Computed after mount to anchor the week to today without an SSR/client mismatch.
+  const [week, setWeek] = useState<{ todayIdx: number; dates: number[] } | null>(null);
+  useEffect(() => setWeek(computeWeek(new Date())), []);
 
   async function drop(day: number) {
     setOver(null);
@@ -44,7 +59,7 @@ export function CalendarBoard({ initial }: { initial: CalendarPost[] }) {
       <div className="grid grid-cols-7 gap-2">
         {days.map((d, i) => {
           const dayPosts = posts.filter((p) => p.day === i);
-          const isToday = i === 1;
+          const isToday = week ? i === week.todayIdx : false;
           return (
             <div
               key={d}
@@ -55,7 +70,7 @@ export function CalendarBoard({ initial }: { initial: CalendarPost[] }) {
             >
               <div className="mb-2 flex items-center justify-between px-1">
                 <span className="text-xs font-medium text-ink-muted">{d}</span>
-                <span className={`text-xs ${isToday ? "text-brand-soft" : "text-ink-faint"}`}>{15 + i}</span>
+                <span className={`text-xs ${isToday ? "text-brand-soft" : "text-ink-faint"}`}>{week ? week.dates[i] : ""}</span>
               </div>
               <div className="space-y-1.5">
                 {dayPosts.map((p) => (
