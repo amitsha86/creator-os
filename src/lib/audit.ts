@@ -198,6 +198,15 @@ export async function runAudit(input: AuditInput): Promise<AuditResult> {
   });
 
   const parsed = coerce(extractJson(text), channel, grounded, live);
+  // Temporary diagnostics: surface why we land on the fallback (timeout vs parse).
+  console.log(
+    "[audit] live=%s textLen=%s parsed=%s head=%j tail=%j",
+    live,
+    text?.length ?? 0,
+    !!parsed,
+    (text ?? "").slice(0, 120),
+    (text ?? "").slice(-120),
+  );
   return parsed ?? fallbackAudit(input, channel, grounded);
 }
 
