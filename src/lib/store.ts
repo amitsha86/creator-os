@@ -42,6 +42,10 @@ async function ensureGlobalSeeded() {
 
 // ---------------- per-user owned data ----------------
 async function ensureUserSeeded(ownerId: string) {
+  // Multi-tenant: new accounts start EMPTY (their own workspace), not a clone of
+  // the demo persona. The polished empty states guide first use. Set
+  // SEED_DEMO_USERS=true to restore demo seeding for a throwaway account.
+  if (process.env.SEED_DEMO_USERS !== "true") return;
   const count = await prisma.content.count({ where: { ownerId } });
   if (count > 0) return;
   await prisma.$transaction([
@@ -158,7 +162,9 @@ export async function moveCalendarPost(id: string, day: number): Promise<boolean
 export async function getCompetitors(ownerId?: string): Promise<(Competitor & { owned: boolean })[]> {
   try {
     await ensureGlobalSeeded();
-    const where = ownerId ? { OR: [{ ownerId: null }, { ownerId }] } : {};
+    // Logged-in users see only their OWN tracked competitors (multi-tenant).
+    // Global seed competitors (ownerId = null) are kept for any anonymous/demo call.
+    const where = ownerId ? { ownerId } : {};
     const rows = await prisma.competitor.findMany({ where, orderBy: { growth: "desc" } });
     return rows.map((c: any) => ({ id: c.id, handle: c.handle, platform: c.platform, subs: Number(c.subs), growth: c.growth, cadence: c.cadence, topVideo: c.topVideo, topViews: Number(c.topViews), thumbStyle: c.thumbStyle, owned: Boolean(ownerId && c.ownerId === ownerId) }));
   } catch { return seedCompetitors.map((c) => ({ ...c, owned: false })); }
