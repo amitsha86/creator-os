@@ -93,60 +93,55 @@ function buildPrompt(input: AuditInput, channel: AuditChannel | null, videos: Yo
 
 ${context}
 
-Respond with ONLY valid JSON (no markdown, no code fences, no commentary) matching this exact schema:
+Respond with ONLY a valid JSON object (no markdown, no code fences, no commentary). Obey the word limits exactly — terseness is mandatory:
 {
-  "score": <integer 0-100, an honest growth-readiness score>,
-  "trend": "<3-5 word phrase, e.g. 'trending upward' or 'plateauing on views'>",
-  "opportunity": "<ONE specific sentence naming a concrete content lane this creator should own>",
-  "why": ["<4 short evidence-style bullets, each referencing their videos, niche, audience, or competitors>"],
-  "nextVideo": "<one concrete, clickable video title>",
-  "hook": "<1-2 sentence spoken hook for that video>",
-  "thumbnail": "<short visual description: subject + text + style>",
-  "repurposePlan": ["<4-6 short items like '5 Shorts', '1 LinkedIn post', '1 X thread', '1 newsletter intro'>"],
-  "working": ["<3 short things working for this creator>"],
-  "notWorking": ["<3 short things holding them back>"],
-  "opportunities": ["<3-4 short content-lane tags>"],
-  "ideas": [
-    { "title": "<clickable title>", "viralScore": <int 70-95>, "why": "<one line>", "hook": "<one line>", "format": "<e.g. 'Long-form + 5 Shorts'>", "repurpose": "<e.g. 'Shorts, X thread, newsletter'>" }
-  ]
+  "score": <integer 0-100, honest growth-readiness score>,
+  "trend": "<max 4 words, e.g. 'trending upward'>",
+  "opportunity": "<ONE sentence, max 18 words, naming a concrete content lane this creator should own>",
+  "why": ["<exactly 4 bullets, each max 12 words, referencing their videos/niche/audience>"],
+  "nextVideo": "<one clickable title, max 12 words>",
+  "hook": "<spoken hook, max 28 words>",
+  "thumbnail": "<subject + text + style, max 12 words>",
+  "repurposePlan": ["<exactly 4 items, each max 3 words, e.g. '5 Shorts', '1 LinkedIn post'>"],
+  "working": ["<exactly 3 items, each max 8 words>"],
+  "notWorking": ["<exactly 3 items, each max 8 words>"],
+  "opportunities": ["<exactly 3 tags, each max 4 words>"]
 }
-Return exactly 4 ideas, sorted by viralScore descending. Keep every field tight — one line each, no filler. Be concrete and specific to THIS creator — never generic. Output JSON only.`;
+Be concrete and specific to THIS creator — never generic. Keep it short so the JSON is complete. Output the JSON object only.`;
 }
 
-function coerce(raw: any, channel: AuditChannel | null, grounded: boolean, live: boolean): AuditResult | null {
+function coerce(
+  raw: any,
+  input: AuditInput,
+  channel: AuditChannel | null,
+  grounded: boolean,
+  live: boolean,
+): AuditResult | null {
   if (!raw || typeof raw !== "object") return null;
   const arr = (v: any, n: number): string[] =>
-    Array.isArray(v) ? v.map((x) => String(x)).filter(Boolean).slice(0, n) : [];
-  const ideas: AuditIdea[] = Array.isArray(raw.ideas)
-    ? raw.ideas
-        .map((i: any) => ({
-          title: String(i?.title ?? "").trim(),
-          viralScore: Math.max(0, Math.min(100, Math.round(Number(i?.viralScore ?? 80)))),
-          why: String(i?.why ?? "").trim(),
-          hook: String(i?.hook ?? "").trim(),
-          format: String(i?.format ?? "").trim(),
-          repurpose: String(i?.repurpose ?? "").trim(),
-        }))
-        .filter((i: AuditIdea) => i.title)
-        .slice(0, 8)
-    : [];
+    Array.isArray(v) ? v.map((x) => String(x).trim()).filter(Boolean).slice(0, n) : [];
 
   const opportunity = String(raw.opportunity ?? "").trim();
-  if (!opportunity || ideas.length === 0) return null; // not usable — let caller fall back
+  const why = arr(raw.why, 5);
+  // The hero (opportunity + why) is the part the model must produce live; if it's
+  // missing the response is unusable, so let the caller fall back entirely.
+  if (!opportunity || why.length === 0) return null;
 
   return {
-    score: Math.max(0, Math.min(100, Math.round(Number(raw.score ?? 80)))),
+    score: Math.max(0, Math.min(100, Math.round(Number(raw.score ?? 78)))),
     trend: String(raw.trend ?? "trending upward").trim(),
     opportunity,
-    why: arr(raw.why, 5),
-    nextVideo: String(raw.nextVideo ?? ideas[0]?.title ?? "").trim(),
-    hook: String(raw.hook ?? ideas[0]?.hook ?? "").trim(),
+    why,
+    nextVideo: String(raw.nextVideo ?? "").trim() || templateIdeas(input)[0].title,
+    hook: String(raw.hook ?? "").trim(),
     thumbnail: String(raw.thumbnail ?? "").trim(),
-    repurposePlan: arr(raw.repurposePlan, 6),
+    repurposePlan: arr(raw.repurposePlan, 6).length ? arr(raw.repurposePlan, 6) : ["5 Shorts", "1 LinkedIn post", "1 X thread", "1 newsletter intro"],
     working: arr(raw.working, 4),
     notWorking: arr(raw.notWorking, 4),
     opportunities: arr(raw.opportunities, 5),
-    ideas,
+    // Ideas stay templated (niche-aware) — they're gated behind sign-up and keeping
+    // them out of the live call keeps that call small, fast, and reliably complete.
+    ideas: templateIdeas(input),
     channel,
     grounded,
     live,
@@ -188,26 +183,31 @@ export async function runAudit(input: AuditInput): Promise<AuditResult> {
 
   const prompt = buildPrompt(input, channel, videos);
   const system = `You are Creora's lead growth strategist for a creator in the "${input.niche?.trim() || "content"}" niche. You are specific, evidence-driven, and never generic. You output exactly what is asked — here, strict JSON only.`;
-  // Haiku + a trimmed budget keeps the call under the serverless time limit; the
-  // 26s timeout leaves headroom below the route's 30s cap so a live result lands.
+  // The live call produces only the compact hero, so a small token budget is enough
+  // for a COMPLETE (parseable) object, and Haiku finishes well under the time limit.
   const { text, live } = await generate(prompt, {
-    maxTokens: 1100,
+    maxTokens: 900,
     system,
     model: process.env.ANTHROPIC_AUDIT_MODEL || "claude-haiku-4-5-20251001",
-    timeoutMs: 26000,
+    timeoutMs: 22000,
   });
 
-  const parsed = coerce(extractJson(text), channel, grounded, live);
-  // Temporary diagnostics: surface why we land on the fallback (timeout vs parse).
-  console.log(
-    "[audit] live=%s textLen=%s parsed=%s head=%j tail=%j",
-    live,
-    text?.length ?? 0,
-    !!parsed,
-    (text ?? "").slice(0, 120),
-    (text ?? "").slice(-120),
-  );
+  const parsed = coerce(extractJson(text), input, channel, grounded, live);
   return parsed ?? fallbackAudit(input, channel, grounded);
+}
+
+/** Niche-aware idea list. Templated (not from the live call) so the live call stays small. */
+export function templateIdeas(input: AuditInput): AuditIdea[] {
+  const niche = input.niche?.trim() || "your niche";
+  const Niche = niche.charAt(0).toUpperCase() + niche.slice(1);
+  return [
+    { title: `I Tried 7 ${Niche} Tools So You Don't Have To`, viralScore: 91, why: "High demand, low saturation, trusted format.", hook: "I tested 7 tools so you can skip the bad ones.", format: "Long-form + 5 Shorts", repurpose: "Shorts, X thread, newsletter" },
+    { title: `I Built a Business With Only ${Niche} for 30 Days`, viralScore: 89, why: "Challenge format outperforms in your niche.", hook: "$0 to launch using only this — 30-day challenge.", format: "Vlog series", repurpose: "Daily Shorts, newsletter" },
+    { title: `The ${Niche} Stack Every Creator Needs in 2026`, viralScore: 86, why: "Evergreen, searchable, sponsor-friendly.", hook: "These 6 tools run my entire channel.", format: "Listicle + demo", repurpose: "Shorts, IG carousel" },
+    { title: `I Let AI Plan My ${Niche} for a Week`, viralScore: 85, why: "Experiment + relatable workflow pain.", hook: "I gave AI full control of my calendar.", format: "Experiment", repurpose: "Shorts, LinkedIn" },
+    { title: `Free ${Niche} Tools Better Than Paid Ones`, viralScore: 84, why: "'Free' + comparison drives high CTR.", hook: "Stop paying for these — the free versions win.", format: "Comparison", repurpose: "Shorts, carousel" },
+    { title: `5 ${Niche} Mistakes That Kill Your Growth`, viralScore: 81, why: "Mistake framing drives strong retention.", hook: "You're probably making mistake #3 right now.", format: "Listicle", repurpose: "X thread, Shorts" },
+  ];
 }
 
 /** Deterministic, niche-aware result so the audit always returns something strong. */
@@ -239,14 +239,7 @@ export function fallbackAudit(input: AuditInput, channel: AuditChannel | null = 
       "Long-form isn't repurposed consistently",
     ],
     opportunities: [`${Niche} experiments`, "Beginner-friendly tutorials", "Tool comparisons", "Behind-the-scenes workflow"],
-    ideas: [
-      { title: `I Tried 7 ${Niche} Tools So You Don't Have To`, viralScore: 91, why: "High demand, low saturation, trusted format.", hook: "I tested 7 tools so you can skip the bad ones.", format: "Long-form + 5 Shorts", repurpose: "Shorts, X thread, newsletter" },
-      { title: `I Built a Business With Only ${Niche} for 30 Days`, viralScore: 89, why: "Challenge format outperforms in your niche.", hook: "$0 to launch using only this — 30-day challenge.", format: "Vlog series", repurpose: "Daily Shorts, newsletter" },
-      { title: `The ${Niche} Stack Every Creator Needs in 2026`, viralScore: 86, why: "Evergreen, searchable, sponsor-friendly.", hook: "These 6 tools run my entire channel.", format: "Listicle + demo", repurpose: "Shorts, IG carousel" },
-      { title: `I Let AI Plan My ${Niche} for a Week`, viralScore: 85, why: "Experiment + relatable workflow pain.", hook: "I gave AI full control of my calendar.", format: "Experiment", repurpose: "Shorts, LinkedIn" },
-      { title: `Free ${Niche} Tools Better Than Paid Ones`, viralScore: 84, why: "'Free' + comparison drives high CTR.", hook: "Stop paying for these — the free versions win.", format: "Comparison", repurpose: "Shorts, carousel" },
-      { title: `5 ${Niche} Mistakes That Kill Your Growth`, viralScore: 81, why: "Mistake framing drives strong retention.", hook: "You're probably making mistake #3 right now.", format: "Listicle", repurpose: "X thread, Shorts" },
-    ],
+    ideas: templateIdeas(input),
     channel,
     grounded,
     live: false,
