@@ -93,10 +93,10 @@ export const auditResult = {
 };
 
 export const pricingPlans = [
-  { name: "Free", price: "₹0", tagline: "Trying Creora", limit: "1 channel · 1 audit / month", features: ["1 channel audit / month", "3 content ideas", "Sample dashboard access", "Basic AI recommendations"], cta: "Start Free Audit", highlight: false },
-  { name: "Starter", price: "₹999", per: "/mo", tagline: "Solo creators", limit: "10 audits / month", features: ["10 audits / month", "50 content ideas / month", "20 scripts / month", "Basic repurposing", "3 competitor channels", "Weekly growth suggestions"], cta: "Start Starter", highlight: false },
-  { name: "Pro", price: "₹2,999", per: "/mo", tagline: "Serious creators", limit: "50 audits / month · advanced radar", features: ["50 audits / month", "Advanced competitor radar", "Unlimited ideas (fair use)", "Advanced scripts", "Repurposing engine", "Weekly growth reports", "Thumbnail & title suggestions", "Priority AI generation"], cta: "Start Pro", highlight: true },
-  { name: "Team", price: "₹7,999", per: "/mo", tagline: "Creator teams & agencies", limit: "5 seats · client workspaces", features: ["5 seats", "Client workspaces", "Shared content pipeline", "Approval workflow", "Team content calendar", "Agency reports", "Priority support"], cta: "Start Team", highlight: false },
+  { name: "Free", price: "₹0", tagline: "Try your first audit.", whyUpgrade: "One-time insight.", limit: "1 channel · 1 audit / month", features: ["1 channel audit / month", "3 content ideas", "Sample dashboard access", "Basic AI recommendations"], cta: "Start Free Audit", highlight: false },
+  { name: "Starter", price: "₹999", per: "/mo", tagline: "Your weekly creator planning system.", whyUpgrade: "Weekly ideas, scripts, and planning.", limit: "10 audits / month", features: ["10 audits / month", "50 content ideas / month", "20 scripts / month", "Basic repurposing", "3 competitor channels", "Weekly growth suggestions"], cta: "Start Starter", highlight: false },
+  { name: "Pro", price: "₹2,999", per: "/mo", tagline: "Full growth copilot with competitor radar and repurposing.", whyUpgrade: "Competitor-backed growth system and repurposing.", limit: "50 audits / month · advanced radar", features: ["50 audits / month", "Advanced competitor radar", "Unlimited ideas (fair use)", "Advanced scripts", "Repurposing engine", "Weekly growth reports", "Thumbnail & title suggestions", "Priority AI generation"], cta: "Start Pro", highlight: true },
+  { name: "Team", price: "₹7,999", per: "/mo", tagline: "Run content for multiple creators.", whyUpgrade: "Manage multiple creator workflows with collaboration.", limit: "5 seats · client workspaces", features: ["5 seats", "Client workspaces", "Shared content pipeline", "Approval workflow", "Team content calendar", "Agency reports", "Priority support"], cta: "Start Team", highlight: false },
 ];
 
 export const features = [
