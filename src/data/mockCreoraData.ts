@@ -124,6 +124,19 @@ export const sampleAudit = {
   score: 82,
   opportunity: "AI productivity tutorials and personal experiment videos.",
   summary: "Your channel performs best when content combines practical AI tools with personal testing or real workflows.",
+  nextBestVideo: {
+    title: "I Used AI to Run My Content Workflow for 7 Days",
+    viralScore: 91,
+    why: [
+      "Personal experiment format creates curiosity.",
+      "AI workflow content fits the creator's strongest niche.",
+      "The idea can be repurposed into daily Shorts.",
+      "The title is specific and outcome-focused.",
+    ],
+    hook: "I gave AI control of my entire content workflow for a week — from ideas to scripts to repurposing. Some parts saved hours. Some parts completely failed.",
+    thumbnail: "Creator reaction + laptop dashboard + bold text: “AI Ran This”",
+    repurposePlan: ["5 Shorts from each experiment day", "1 LinkedIn post about lessons learned", "1 X thread with the workflow", "1 newsletter intro", "1 YouTube community post"],
+  },
   working: [
     "Educational AI content performs best",
     "Titles with numbers get higher curiosity",
