@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import { Legal } from "@/components/legal";
 
-export const metadata: Metadata = { title: "Privacy — Creora", description: "How Creora collects, uses, and protects your data." };
+export const metadata: Metadata = { title: "Privacy Policy — Creora", description: "How Creora collects, uses, and protects your data." };
 
 export default function PrivacyPage() {
   return (
     <Legal
-      title="Privacy"
-      intro="Plain-language overview of what Creora collects and how it's used. (This is a general policy and not legal advice.)"
+      title="Privacy Policy"
+      intro="A plain-language overview of what Creora collects and how it's used. This is a general policy, not legal advice."
       sections={[
-        { heading: "What we may collect", bullets: ["Channel URL and inputs you provide (niche, goals, competitors)", "Connected account information if you use OAuth integrations", "Analytics data from connected platforms, where you grant access", "Account details such as your email"] },
-        { heading: "How we use your data", body: "We use your data to generate audits, ideas, scripts, and repurposed content, and to improve your recommendations. We do not sell your personal data." },
-        { heading: "Requesting deletion", body: "You can request deletion of your account and associated data at any time. See the Data Deletion page for steps." },
-        { heading: "Contact", body: "Questions about privacy? Email support@creora.pro. (TODO: confirm support address.)" },
+        { heading: "Data we may collect", bullets: ["Account information such as your name, email, and login details", "Channel URLs and creator-provided inputs", "Content preferences, niche, goals, and competitor inputs", "Generated audits, scripts, ideas, and repurposing outputs", "Analytics data if you connect supported platforms", "Product usage events used to improve the experience"] },
+        { heading: "How we use your data", bullets: ["Generate creator audits", "Personalize content recommendations", "Improve product quality", "Maintain account access", "Provide support", "Understand product usage and conversion"] },
+        { heading: "What we do not do", bullets: ["We do not post without your permission", "We do not sell creator channel data", "We do not guarantee growth outcomes"] },
+        { heading: "Data deletion", body: "You can request deletion of your account and associated data at any time. See the Data Deletion page for the steps." },
+        { heading: "Contact", body: "Questions about privacy? Email support@creora.pro." },
       ]}
     />
   );
