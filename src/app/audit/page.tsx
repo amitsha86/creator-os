@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { auditResult } from "@/data/mockCreoraData";
-import { Sparkles, ArrowRight, Check, X, TrendingUp, Loader2, Target, Calendar, Lock, Lightbulb, Repeat, PenLine } from "lucide-react";
+import type { AuditResult } from "@/lib/audit";
+import { Sparkles, ArrowRight, Check, X, TrendingUp, Loader2, Target, Calendar, Lock, Lightbulb, Repeat, PenLine, Film } from "lucide-react";
 
 type Stage = "form" | "loading" | "result";
 
@@ -10,9 +10,16 @@ function Pill({ children, tone = "cream" }: { children: React.ReactNode; tone?: 
   return <span className={`creora-pill creora-pill-${tone}`}>{children}</span>;
 }
 
+function fmt(n: number | null): string {
+  if (n === null) return "hidden";
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return String(n);
+}
+
 const previewCards = [
   { Icon: TrendingUp, title: "Your Growth Score", desc: "A 0–100 score with exactly what's working and what's holding you back." },
-  { Icon: Lightbulb, title: "10 video ideas", desc: "Ready-to-make ideas with hooks, formats, and viral scores." },
+  { Icon: Lightbulb, title: "Your next best video", desc: "The exact title, hook, and thumbnail to make next — tailored to your channel." },
   { Icon: Calendar, title: "30-day content plan", desc: "A week-by-week plan so you always know what to publish next." },
   { Icon: Repeat, title: "Repurpose angles", desc: "Turn each idea into Shorts, posts, threads, and a newsletter." },
 ];
@@ -20,11 +27,30 @@ const previewCards = [
 export default function AuditPage() {
   const [stage, setStage] = useState<Stage>("form");
   const [url, setUrl] = useState("");
+  const [niche, setNiche] = useState("");
+  const [goal, setGoal] = useState("Grow subscribers");
+  const [competitors, setCompetitors] = useState("");
+  const [result, setResult] = useState<AuditResult | null>(null);
+  const [error, setError] = useState(false);
 
-  function run(e: React.FormEvent) {
+  async function run(e: React.FormEvent) {
     e.preventDefault();
+    setError(false);
     setStage("loading");
-    setTimeout(() => setStage("result"), 1900);
+    try {
+      const res = await fetch("/api/audit", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url, niche, goal, competitors }),
+      });
+      if (!res.ok) throw new Error("audit failed");
+      const data: AuditResult = await res.json();
+      setResult(data);
+    } catch {
+      setError(true);
+    } finally {
+      setStage("result");
+    }
   }
 
   return (
@@ -39,7 +65,7 @@ export default function AuditPage() {
         <section className="mx-auto max-w-2xl px-5 py-12 text-center">
           <Pill tone="lime"><Sparkles size={13} /> Free Creator Growth Audit</Pill>
           <h1 className="creora-display mt-5 text-[clamp(34px,6vw,56px)] text-[#0F172A]">Discover your next best video.</h1>
-          <p className="mx-auto mt-4 max-w-lg text-[#64748B]">Drop your channel and Creora scores your growth, finds your opportunities, and hands you 10 ready-to-make ideas.</p>
+          <p className="mx-auto mt-4 max-w-lg text-[#64748B]">Drop your channel and Creora scores your growth, finds the one opportunity you should own, and writes your next video — title, hook, thumbnail, and repurpose plan.</p>
 
           <form onSubmit={run} className="creora-card mt-9 space-y-4 p-6 text-left md:p-8">
             <Field label="YouTube channel URL">
@@ -47,10 +73,10 @@ export default function AuditPage() {
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Niche">
-                <input placeholder="e.g. AI & productivity" className="creora-input" />
+                <input value={niche} onChange={(e) => setNiche(e.target.value)} placeholder="e.g. AI & productivity" className="creora-input" />
               </Field>
               <Field label="Primary goal">
-                <select className="creora-input">
+                <select value={goal} onChange={(e) => setGoal(e.target.value)} className="creora-input">
                   <option>Grow subscribers</option>
                   <option>More views</option>
                   <option>Monetize / sponsors</option>
@@ -59,7 +85,7 @@ export default function AuditPage() {
               </Field>
             </div>
             <Field label="Competitors (optional)">
-              <input placeholder="@competitor1, @competitor2" className="creora-input" />
+              <input value={competitors} onChange={(e) => setCompetitors(e.target.value)} placeholder="@competitor1, @competitor2" className="creora-input" />
             </Field>
             <button type="submit" className="creora-btn creora-btn-blue w-full">Generate My Free Audit <ArrowRight size={16} /></button>
             <p className="text-center text-xs text-[#64748B]">No card required · We never post without your permission.</p>
@@ -88,14 +114,21 @@ export default function AuditPage() {
           <Loader2 size={40} className="animate-spin text-[#2463EB]" />
           <div className="creora-display mt-6 text-2xl text-[#0F172A]">Analyzing your channel…</div>
           <div className="mt-2 space-y-1 text-sm text-[#64748B]">
-            <div>Scoring growth signals</div>
-            <div>Finding viral opportunities</div>
-            <div>Generating your 30-day content plan</div>
+            <div>Reading your recent uploads</div>
+            <div>Finding the lane you should own</div>
+            <div>Writing your next best video</div>
           </div>
         </section>
       )}
 
-      {stage === "result" && <AuditReport />}
+      {stage === "result" && result && <AuditReport a={result} />}
+      {stage === "result" && !result && (
+        <section className="mx-auto grid max-w-md place-items-center px-5 py-32 text-center">
+          <div className="creora-display text-2xl text-[#0F172A]">That didn&apos;t go through.</div>
+          <p className="mt-2 text-sm text-[#64748B]">We couldn&apos;t reach the audit engine. Give it another try.</p>
+          <button onClick={() => setStage("form")} className="creora-btn creora-btn-blue mt-5">Try again</button>
+        </section>
+      )}
     </div>
   );
 }
@@ -109,16 +142,64 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function AuditReport() {
-  const a = auditResult;
+function Label({ children }: { children: React.ReactNode }) {
+  return <div className="text-[11px] font-semibold uppercase tracking-wide text-[#64748B]">{children}</div>;
+}
+
+function AuditReport({ a }: { a: AuditResult }) {
   const previewIdeas = a.ideas.slice(0, 3);
-  const lockedCount = a.ideas.length - previewIdeas.length;
+  const lockedCount = Math.max(0, a.ideas.length - previewIdeas.length);
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
+  const sourceLine = a.grounded && a.channel
+    ? `Analyzed ${a.channel.title} · ${fmt(a.channel.subscribers)} subscribers · last ${a.channel.videos ? Math.min(a.channel.videos, 10) : "10"} uploads`
+    : a.channel
+      ? `Analyzed ${a.channel.title} · ${fmt(a.channel.subscribers)} subscribers`
+      : "Based on your niche — connect your channel in-app for a video-level breakdown.";
+
   return (
     <section className="mx-auto max-w-5xl px-5 py-10">
-      <div className="flex items-center gap-2"><Pill tone="lime"><Sparkles size={13} /> Your free audit preview</Pill></div>
+      <div className="flex flex-wrap items-center gap-2">
+        <Pill tone="lime"><Sparkles size={13} /> Your free audit</Pill>
+        {a.live && <Pill tone="purple">Generated live for you</Pill>}
+      </div>
+      <p className="mt-2 text-xs text-[#64748B]">{sourceLine}</p>
+
+      {/* THE OPPORTUNITY — the magical headline */}
+      <div className="creora-card mt-4 p-7 md:p-9">
+        <div className="inline-flex"><Pill tone="lime"><Target size={13} /> Your channel opportunity</Pill></div>
+        <h1 className="creora-display mt-3 text-[clamp(24px,4vw,38px)] leading-tight text-[#0F172A]">{a.opportunity}</h1>
+
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
+          <div>
+            <Label>Why</Label>
+            <ul className="mt-2 space-y-2 text-[15px] text-[#0F172A]">
+              {a.why.map((w) => <li key={w} className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-[#2463EB]" /> {w}</li>)}
+            </ul>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <Label>Next best video</Label>
+              <div className="mt-1 flex items-start gap-2 text-[17px] font-semibold text-[#0F172A]"><Film size={17} className="mt-0.5 shrink-0 text-[#2463EB]" /> {a.nextVideo}</div>
+            </div>
+            <div className="rounded-[14px] p-3.5 text-[14px] text-[#0F172A]" style={{ background: "#E7EDF6" }}>
+              <span className="font-semibold">Hook:</span> {a.hook}
+            </div>
+            <div>
+              <Label>Suggested thumbnail</Label>
+              <div className="mt-1 text-[14px] text-[#0F172A]">{a.thumbnail}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 border-t border-[rgba(15,23,42,0.08)] pt-5">
+          <Label>Repurpose plan</Label>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {a.repurposePlan.map((r) => <Pill key={r} tone="purple"><Repeat size={12} /> {r}</Pill>)}
+          </div>
+        </div>
+      </div>
 
       {/* Score */}
       <div className="creora-card mt-5 flex flex-col items-center gap-6 p-8 md:flex-row md:p-10">
@@ -130,7 +211,7 @@ function AuditReport() {
         </div>
         <div>
           <div className="flex items-center gap-2"><TrendingUp size={18} className="text-[#2463EB]" /><span className="creora-display text-2xl text-[#0F172A]">Your channel is {a.trend}.</span></div>
-          <p className="mt-2 text-[#64748B]">Here&apos;s a preview of what&apos;s working, what&apos;s holding you back, and your first few ideas. Unlock the full audit free to see all 10.</p>
+          <p className="mt-2 text-[#64748B]">Here&apos;s what&apos;s working, what&apos;s holding you back, and your first few ideas. Unlock the full audit free to see all {a.ideas.length}.</p>
         </div>
       </div>
 
@@ -151,17 +232,19 @@ function AuditReport() {
       </div>
 
       {/* Opportunities */}
-      <div className="creora-card mt-5 p-6">
-        <div className="flex items-center gap-2 font-semibold text-[#0F172A]"><Target size={18} className="text-[#2463EB]" /> Top opportunities</div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {a.opportunities.map((o) => <span key={o} className="creora-pill creora-pill-lime">{o}</span>)}
+      {a.opportunities.length > 0 && (
+        <div className="creora-card mt-5 p-6">
+          <div className="flex items-center gap-2 font-semibold text-[#0F172A]"><Target size={18} className="text-[#2463EB]" /> Top opportunities</div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {a.opportunities.map((o) => <span key={o} className="creora-pill creora-pill-lime">{o}</span>)}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Preview ideas */}
       <div className="mt-10 flex items-end justify-between">
         <h2 className="creora-display text-[clamp(24px,4vw,36px)] text-[#0F172A]">Your first 3 ideas.</h2>
-        <span className="text-sm text-[#64748B]">{lockedCount} more in the full audit</span>
+        {lockedCount > 0 && <span className="text-sm text-[#64748B]">{lockedCount} more in the full audit</span>}
       </div>
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         {previewIdeas.map((idea, i) => (
@@ -173,8 +256,8 @@ function AuditReport() {
             <p className="mt-2 text-[13px] text-[#64748B]">{idea.why}</p>
             <div className="mt-3 rounded-[14px] p-2.5 text-[13px] text-[#0F172A]" style={{ background: "#E7EDF6" }}><span className="font-semibold">Hook:</span> {idea.hook}</div>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              <Pill tone="cream">{idea.format}</Pill>
-              <Pill tone="purple">{idea.repurpose}</Pill>
+              {idea.format && <Pill tone="cream">{idea.format}</Pill>}
+              {idea.repurpose && <Pill tone="purple">{idea.repurpose}</Pill>}
             </div>
           </div>
         ))}
