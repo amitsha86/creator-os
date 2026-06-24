@@ -8,7 +8,7 @@ export function Legal({ title, intro, sections, updated = "June 2026" }: { title
     <div className="creora-root min-h-screen">
       <header className="mx-auto flex max-w-3xl items-center px-5 py-4">
         <Link href="/" className="creora-display text-xl text-[#0F172A]">Creora</Link>
-        <Link href="/audit" className="creora-btn creora-btn-blue ml-auto !py-2.5 !px-4 text-sm">Get Free Audit</Link>
+        <Link href="/audit" className="creora-btn creora-btn-blue ml-auto !py-2.5 !px-4 text-sm">Get Free Channel Audit</Link>
       </header>
 
       <article className="mx-auto max-w-3xl px-5 py-8">
