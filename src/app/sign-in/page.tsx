@@ -12,7 +12,7 @@ export default function SignInPage() {
           <ul className="mt-6 space-y-2 text-[#E7EDF6]">
             <li>· Find your next best video idea</li>
             <li>· Generate scripts in your voice</li>
-            <li>· Repurpose one video into 20 assets</li>
+            <li>· Turn one video into 20+ platform-ready assets</li>
             <li>· Track what actually works</li>
           </ul>
         </div>
@@ -31,7 +31,12 @@ export default function SignInPage() {
             <p className="mt-1 text-sm text-[#64748B]">Continue building your creator growth system.</p>
           </div>
           <SignIn routing="hash" signUpUrl="/sign-up" forceRedirectUrl="/dashboard" />
-          <Link href="/" className="text-sm text-[#64748B] hover:text-[#0F172A]">← Back to homepage</Link>
+          <p className="max-w-xs text-center text-xs text-[#64748B]">No credit card needed to start. Creora never posts without your permission.</p>
+          <div className="flex gap-4 text-sm text-[#64748B]">
+            <Link href="/sample-audit" className="hover:text-[#0F172A]">View Sample Audit</Link>
+            <Link href="/demo" className="hover:text-[#0F172A]">Try Demo Dashboard</Link>
+            <Link href="/" className="hover:text-[#0F172A]">← Home</Link>
+          </div>
         </div>
       </div>
     </div>
