@@ -15,6 +15,10 @@ export interface ChannelGrowth {
   topVideo: { title: string; views: number } | null;
   momentumMultiple: number; // recent avg ÷ lifetime avg
   mainOpportunity: string;
+  /** Specific, honest coaching actions derived from this channel's real data. */
+  coach: string[];
+  /** Recent uploads that beat the channel's average — formats worth repeating. */
+  formats: { title: string; views: number; multiple: number }[];
 }
 
 function clamp(n: number, lo: number, hi: number) {
@@ -47,6 +51,35 @@ export function computeGrowth(stats: YouTubeStats, videos: YouTubeVideo[]): Chan
       ? `"${truncate(topVideo.title, 46)}" did ${topMult.toFixed(1)}x your average — make more like it.`
       : "Recent uploads cluster near your average — test a sharper hook or a new format.";
 
+  // "Viral Opportunities" for a connected channel = the channel's OWN recent uploads
+  // that beat its average. Honest, real-data formats worth repeating — no invented trends.
+  const formats = recent
+    .filter((v) => lifetimeAvg > 0 && v.views > lifetimeAvg * 1.1)
+    .sort((a, b) => b.views - a.views)
+    .slice(0, 4)
+    .map((v) => ({ title: v.title, views: v.views, multiple: v.views / lifetimeAvg }));
+
+  // AI Growth Coach: 4 specific, honest actions derived from this channel's real signals.
+  const coach: string[] = [];
+  coach.push(
+    topVideo
+      ? `Double down on "${truncate(topVideo.title, 40)}" — it's your strongest recent format.`
+      : "Find your next winner — your recent uploads perform within a narrow band, so it's time to test something new."
+  );
+  coach.push(
+    momentumMultiple >= 1.1
+      ? "Momentum is up — keep your current cadence and lean harder into what's working."
+      : momentumMultiple >= 0.85
+        ? "You're holding steady — a sharper hook or stronger thumbnail could tip you into growth."
+        : "Recent uploads are below your average — revisit what made your best videos click and repeat it."
+  );
+  coach.push(
+    topVideo
+      ? `Repurpose "${truncate(topVideo.title, 34)}" into 3–5 Shorts to extend its reach.`
+      : "Repurpose your best long-form video into 3–5 Shorts to extend its reach."
+  );
+  coach.push("Test a sharper hook in the first 10 seconds — it's the highest-leverage retention fix.");
+
   return {
     score,
     trend,
@@ -54,5 +87,7 @@ export function computeGrowth(stats: YouTubeStats, videos: YouTubeVideo[]): Chan
     topVideo,
     momentumMultiple,
     mainOpportunity,
+    coach,
+    formats,
   };
 }
