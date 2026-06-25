@@ -124,23 +124,42 @@ export default async function DashboardPage() {
           </Card>
         )}
 
-        {/* Viral Opportunities */}
+        {/* Viral Opportunities — for a connected channel, the creator's OWN
+            over-performing uploads (formats worth repeating); else sample topics. */}
         <Card className="p-6 lg:col-span-2">
           <div className="mb-3 flex items-center justify-between">
-            <span className="flex items-center gap-2 text-sm font-semibold text-ink"><Flame size={16} className="text-brand" /> Viral Opportunities</span>
+            <span className="flex items-center gap-2 text-sm font-semibold text-ink"><Flame size={16} className="text-brand" /> {realGrowth ? "Formats worth repeating" : "Viral Opportunities"}</span>
             <Link href="/viral" className="flex items-center gap-1 text-xs text-brand hover:underline">Open Viral <ArrowRight size={12} /></Link>
           </div>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {viralOpportunities.map((o) => (
-              <div key={o.topic} className="rounded-2xl border border-line bg-bg-soft p-3">
-                <div className="text-sm font-medium text-ink">{o.topic}</div>
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  <Badge tone="mint">Trend {o.trend}</Badge>
-                  <Badge>{o.saturation} saturation</Badge>
-                </div>
+          {realGrowth ? (
+            realGrowth.formats.length ? (
+              <div className="grid gap-2 sm:grid-cols-2">
+                {realGrowth.formats.map((f) => (
+                  <div key={f.title} className="rounded-2xl border border-line bg-bg-soft p-3">
+                    <div className="truncate text-sm font-medium text-ink" title={f.title}>{f.title}</div>
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      <Badge tone="mint">{f.multiple.toFixed(1)}x your avg</Badge>
+                      <Badge>{compact(f.views)} views</Badge>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            ) : (
+              <p className="text-sm text-ink-faint">No recent uploads have beaten your average yet. Run a free audit for a fresh angle to test, or keep an eye here as new videos land.</p>
+            )
+          ) : (
+            <div className="grid gap-2 sm:grid-cols-2">
+              {viralOpportunities.map((o) => (
+                <div key={o.topic} className="rounded-2xl border border-line bg-bg-soft p-3">
+                  <div className="text-sm font-medium text-ink">{o.topic}</div>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    <Badge tone="mint">Trend {o.trend}</Badge>
+                    <Badge>{o.saturation} saturation</Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
 
         {/* Competitor Radar (real data) */}
@@ -176,10 +195,10 @@ export default async function DashboardPage() {
             <Link href="/coach" className="flex items-center gap-1 text-xs text-brand hover:underline">Open <ArrowRight size={12} /></Link>
           </div>
           <ul className="space-y-2 text-[14px] text-ink">
-            {coach.map((r, i) => (
-              <li key={r.id} className="flex gap-2">
+            {(realGrowth ? realGrowth.coach : coach.map((r) => r.action)).map((action, i) => (
+              <li key={i} className="flex gap-2">
                 <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#BEF264] text-[11px] font-bold text-[#1A2E05]">{i + 1}</span>
-                {r.action}
+                {action}
               </li>
             ))}
           </ul>
