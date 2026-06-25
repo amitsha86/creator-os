@@ -245,7 +245,15 @@ export default function CreoraHome() {
               <div className="mt-2 flex items-start gap-1.5 text-[12px] text-[#0F172A]"><Zap size={13} className="mt-0.5 shrink-0 text-[#2463EB]" /><span><span className="font-semibold">Why upgrade:</span> {p.whyUpgrade}</span></div>
               <div className="mt-3 rounded-[12px] px-3 py-2 text-[12px] font-semibold text-[#0F172A]" style={{ background: "#E7EDF6" }}>{p.limit}</div>
               <ul className="mt-4 flex-1 space-y-2 text-sm text-[#0F172A]">
-                {p.features.map((f) => <li key={f} className="flex gap-2"><Check size={15} className="mt-0.5 shrink-0 text-[#2463EB]" /> {f}</li>)}
+                {p.features.map((f) => {
+                  const soon = f.includes("(coming soon)");
+                  return (
+                    <li key={f} className={`flex items-center gap-2 ${soon ? "text-[#94A3B8]" : "text-[#0F172A]"}`}>
+                      <Check size={15} className={`mt-0.5 shrink-0 ${soon ? "text-[#94A3B8]" : "text-[#2463EB]"}`} /> {f.replace(" (coming soon)", "")}
+                      {soon && <span className="rounded-full bg-[#E7EDF6] px-1.5 py-0.5 text-[10px] font-semibold text-[#64748B]">Soon</span>}
+                    </li>
+                  );
+                })}
               </ul>
               <Link href="/audit" className={`creora-btn mt-6 w-full ${p.highlight ? "creora-btn-blue" : "creora-btn-cream"}`}>{p.cta}</Link>
             </div>
